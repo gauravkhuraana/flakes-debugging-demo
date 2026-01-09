@@ -104,6 +104,28 @@ npx playwright test --ui
 npx playwright test --trace on
 ```
 
+### Viewing Reports
+
+```bash
+# View the default HTML report (after running tests)
+npm run report
+
+# Generate and view passing tests report
+npm run generate:pass
+npm run report:pass
+
+# Generate and view failing tests report
+npm run generate:fail
+npm run report:fail
+
+# Generate both reports
+npm run generate:reports
+```
+
+**Live Reports (GitHub Pages):**
+- 📗 [Passing Tests Report](https://gauravkhuraana.github.io/flakes-debugging-demo/passing-report/)
+- 📕 [Failing Tests Report](https://gauravkhuraana.github.io/flakes-debugging-demo/failing-report/)
+
 ---
 
 ## 📁 Project Structure

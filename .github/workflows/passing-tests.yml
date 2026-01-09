@@ -38,7 +38,7 @@ jobs:
         run: npx playwright install --with-deps chromium
       
       - name: Run passing tests
-        run: npx playwright test tests/**/*.pass.spec.ts --reporter=list
+        run: npx playwright test tests/**/*.pass.spec.ts --reporter=html,list
         env:
           # ✅ FIX: All required environment variables provided
           BASE_URL: ${{ env.BASE_URL }}
@@ -62,6 +62,14 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      
+      - name: Deploy Report to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./playwright-report
+          destination_dir: passing-report
       
       - name: Test Summary
         if: always()
