@@ -41,7 +41,7 @@ test.describe('Dependencies Demo - Passing Tests @pass', () => {
    */
   test('should fetch user data - mocked API', async ({ page }) => {
     // ✅ Mock the external API response
-    await page.route('**/api.example.com/users/*', async route => {
+    await page.route('**/api/users/*', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -55,9 +55,11 @@ test.describe('Dependencies Demo - Passing Tests @pass', () => {
     
     await page.goto(BASE_URL);
     
-    // ✅ Now we can make requests and get predictable responses
-    const response = await page.request.get('https://api.example.com/users/1');
-    const user = await response.json();
+    // ✅ Trigger a fetch from within the page context (goes through route interception)
+    const user = await page.evaluate(async () => {
+      const response = await fetch('/api/users/1');
+      return response.json();
+    });
     
     // ✅ Assertions on known, controlled data
     expect(user.email).toBe('test@example.com');
