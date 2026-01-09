@@ -122,9 +122,11 @@ npm run report:fail
 npm run generate:reports
 ```
 
+<!-- Uncomment when repo is public:
 **Live Reports (GitHub Pages):**
 - 📗 [Passing Tests Report](https://gauravkhuraana.github.io/flakes-debugging-demo/passing-report/)
 - 📕 [Failing Tests Report](https://gauravkhuraana.github.io/flakes-debugging-demo/failing-report/)
+-->
 
 ---
 
