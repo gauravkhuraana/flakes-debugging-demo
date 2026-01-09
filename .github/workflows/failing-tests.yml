@@ -63,11 +63,11 @@ jobs:
           echo "These tests are **intentionally designed to fail** in CI to demonstrate common flakiness patterns." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### FLAKES Categories Demonstrated:" >> $GITHUB_STEP_SUMMARY
+          echo "- **F** - Filesystem/path issues" >> $GITHUB_STEP_SUMMARY
           echo "- **L** - Latency & Timing issues" >> $GITHUB_STEP_SUMMARY
           echo "- **A** - Async operations without await" >> $GITHUB_STEP_SUMMARY
-          echo "- **E** - Environment variables missing" >> $GITHUB_STEP_SUMMARY
           echo "- **K** - Konfiguration drift (hardcoded URLs, no viewport)" >> $GITHUB_STEP_SUMMARY
+          echo "- **E** - Environment variables missing" >> $GITHUB_STEP_SUMMARY
           echo "- **S** - State pollution between tests" >> $GITHUB_STEP_SUMMARY
-          echo "- **F** - Filesystem/path issues" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "👉 See the **passing-tests.yml** workflow for the fixed versions!" >> $GITHUB_STEP_SUMMARY

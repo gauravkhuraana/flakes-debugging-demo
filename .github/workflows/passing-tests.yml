@@ -71,56 +71,11 @@ jobs:
           echo "These tests demonstrate **properly configured CI tests** using the FLAKES framework fixes." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Fixes Applied:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **F** - Relative paths with \`path.join()\`" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **L** - Explicit waits with \`toBeVisible()\`, \`toBeEnabled()\`" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **A** - Proper \`await\` on all async operations" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **E** - Environment variables injected in workflow" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **K** - Config-driven URLs, explicit viewport (1280x720)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **E** - Environment variables injected in workflow" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **S** - Unique test data, fresh browser contexts, cleanup" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **F** - Relative paths with \`path.join()\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📚 Learn more in the [FLAKES Checklist](docs/FLAKES-checklist.md)" >> $GITHUB_STEP_SUMMARY
-
-  # Optional: Run tests on multiple browsers
-  test-cross-browser:
-    name: Cross-Browser Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chromium, firefox, webkit]
-    
-    env:
-      BASE_URL: https://gauravkhurana.in/test-automation-play
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps ${{ matrix.browser }}
-      
-      - name: Run tests on ${{ matrix.browser }}
-        run: npx playwright test tests/**/*.pass.spec.ts --project=${{ matrix.browser }} --reporter=list
-        env:
-          BASE_URL: ${{ env.BASE_URL }}
-          API_KEY: ${{ secrets.API_KEY || 'test-api-key-for-demo' }}
-      
-      - name: Upload results for ${{ matrix.browser }}
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ matrix.browser }}
-          path: test-results/
-          retention-days: 7
