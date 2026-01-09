@@ -1,0 +1,41 @@
+{
+  "name": "flakes-debugging-demo",
+  "version": "1.0.0",
+  "description": "Companion repo for TestGuild 2026: When Tests Fail in CI But Pass Locally",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:fail": "npx playwright test --grep @fail",
+    "test:pass": "npx playwright test --grep @pass",
+    "test:simple": "npx playwright test tests/1-simple/",
+    "test:medium": "npx playwright test tests/2-medium/",
+    "test:complex": "npx playwright test tests/3-complex/",
+    "test:ui": "npx playwright test --ui",
+    "test:debug": "npx playwright test --debug",
+    "test:trace": "npx playwright test --trace on",
+    "report": "npx playwright show-report",
+    "report:pass": "npx playwright show-report passreport",
+    "report:fail": "npx playwright show-report failreport",
+    "generate:reports": "npm run generate:pass & npm run generate:fail",
+    "generate:pass": "cross-env REPORT_OUTPUT=passreport npx playwright test --grep @pass || exit 0",
+    "generate:fail": "cross-env REPORT_OUTPUT=failreport npx playwright test --grep @fail || exit 0"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "ci",
+    "flaky-tests",
+    "debugging",
+    "test-automation"
+  ],
+  "author": "Gaurav Khurana",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "allure-commandline": "^2.36.0",
+    "allure-playwright": "^3.4.3",
+    "cross-env": "^10.1.0",
+    "typescript": "^5.3.0"
+  }
+}

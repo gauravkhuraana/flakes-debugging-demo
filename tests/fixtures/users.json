@@ -1,0 +1,16 @@
+{
+  "testUsers": [
+    {
+      "email": "admin@test.com",
+      "password": "password123",
+      "role": "admin"
+    },
+    {
+      "email": "user@test.com",
+      "password": "password123",
+      "role": "user"
+    }
+  ],
+  "defaultTimeout": 5000,
+  "baseUrl": "https://gauravkhurana.in/test-automation-play/"
+}

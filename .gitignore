@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
+
+# Allure
+allure-results/
+allure-report/
+
+# Generated Reports
+passreport/
+failreport/
+
+# Build outputs
+dist/
+
+# Environment files (document required vars in README)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test artifacts (keep in CI, ignore locally)
+screenshots/
+videos/
+traces/
