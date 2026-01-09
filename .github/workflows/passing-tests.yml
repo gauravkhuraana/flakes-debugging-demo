@@ -44,8 +44,6 @@ jobs:
           BASE_URL: ${{ env.BASE_URL }}
           API_KEY: ${{ secrets.API_KEY || 'test-api-key-for-demo' }}
           API_TIMEOUT: ${{ env.API_TIMEOUT }}
-          # ✅ FIX: Explicit test configuration
-          PLAYWRIGHT_BROWSERS_PATH: 0
       
       - name: Upload test results
         if: always()
