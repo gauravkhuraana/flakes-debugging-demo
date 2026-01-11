@@ -35,39 +35,14 @@ import * as os from 'os';
 
 const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 
-// Flag to print environment info only once
-let envPrinted = false;
+// 🔍 Minimal logging - once per suite
+function logEnv() {
+  console.log(`\n✅ cwd: ${process.cwd()} | platform: ${process.platform} | CI: ${process.env.CI || 'local'}\n`);
+}
 
 test.describe('Filesystem Demo - Passing Tests @pass', () => {
 
-  // Print environment info once at the start
-  test.beforeAll(() => {
-    if (envPrinted) return;
-    envPrinted = true;
-    
-    const totalMemGB = (os.totalmem() / (1024 ** 3)).toFixed(2);
-    const freeMemGB = (os.freemem() / (1024 ** 3)).toFixed(2);
-    const usedMemGB = ((os.totalmem() - os.freemem()) / (1024 ** 3)).toFixed(2);
-    
-    console.log('\n' + '═'.repeat(70));
-    console.log('✅ ENVIRONMENT INFO (Common for all tests)');
-    console.log('═'.repeat(70));
-    console.log(`💻 OS Platform:               ${process.platform}`);
-    console.log(`💻 OS Type:                   ${os.type()} ${os.release()}`);
-    console.log(`💻 Architecture:              ${os.arch()}`);
-    console.log(`🔢 CPU Cores:                 ${os.cpus().length}`);
-    console.log(`🧠 Total RAM:                 ${totalMemGB} GB`);
-    console.log(`🧠 Free RAM:                  ${freeMemGB} GB`);
-    console.log(`🧠 Used RAM:                  ${usedMemGB} GB`);
-    console.log(`👤 Username:                  ${os.userInfo().username}`);
-    console.log(`🏠 Home Directory:            ${os.homedir()}`);
-    console.log(`📁 Temp Directory:            ${os.tmpdir()}`);
-    console.log(`📍 Current Working Directory: ${process.cwd()}`);
-    console.log(`📝 Path Separator:            '${path.sep}'`);
-    console.log(`🔧 CI Environment:            ${process.env.CI || 'false'}`);
-    console.log(`🔧 RUNNER_TEMP:               ${process.env.RUNNER_TEMP || 'not set'}`);
-    console.log('═'.repeat(70) + '\n');
-  });
+  test.beforeAll(() => logEnv());
 
   test('should load test data - relative path with path.join', async ({ page }) => {
     

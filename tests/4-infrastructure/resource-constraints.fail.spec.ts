@@ -34,27 +34,9 @@ import * as os from 'os';
 
 const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 
-// 🔍 DEMO LOGGING: Show resource differences between local and CI
-function logResourceInfo(testName: string) {
-  console.log('\n' + '═'.repeat(70));
-  console.log(`❌ RESOURCE-INTENSIVE TEST: ${testName}`);
-  console.log('═'.repeat(70));
-  console.log(`💻 OS Platform:       ${process.platform}`);
-  console.log(`🔧 CI Environment:    ${process.env.CI || 'false (local)'}`);
-  console.log(`🔧 GitHub Actions:    ${process.env.GITHUB_ACTIONS || 'false'}`);
-  console.log('');
-  console.log('⚡ RESOURCE COMPARISON:');
-  console.log(`   CPU Cores:         ${os.cpus().length} cores`);
-  console.log(`   CPU Model:         ${os.cpus()[0]?.model || 'unknown'}`);
-  console.log(`   Total Memory:      ${Math.round(os.totalmem() / 1024 / 1024 / 1024)} GB`);
-  console.log(`   Free Memory:       ${Math.round(os.freemem() / 1024 / 1024 / 1024)} GB`);
-  console.log(`   Memory Used:       ${Math.round((os.totalmem() - os.freemem()) / 1024 / 1024 / 1024)} GB`);
-  console.log(`   Load Average:      ${os.loadavg().map(n => n.toFixed(2)).join(', ')}`);
-  console.log('');
-  console.log('📊 CI vs Local (typical):');
-  console.log('   Local:   8-16 cores, 16-32GB RAM, no limits');
-  console.log('   CI:      2-4 cores, 4-8GB RAM, strict quotas');
-  console.log('═'.repeat(70) + '\n');
+// 🔍 Minimal logging - once per suite
+function logEnv() {
+  console.log(`\n❌ ${process.platform} | CI: ${process.env.CI || 'local'} | Cores: ${os.cpus().length} | RAM: ${Math.round(os.freemem() / 1024 / 1024 / 1024)}GB free\n`);
 }
 
 /**
@@ -67,24 +49,15 @@ test.describe.configure({ mode: 'parallel' });
 
 test.describe('Infrastructure Demo - Failing Tests @fail', () => {
 
+  test.beforeAll(() => logEnv());
+
   /**
    * ❌ PROBLEM 1: Short timeout assumes fast CI
    * Local: Completes in 500ms
    * CI: May take 2-3 seconds due to resource contention
    */
   test('should load page - timeout too short for CI', async ({ page }) => {
-    logResourceInfo('Timeout Too Short Test');
-    
     console.log('❌ PROBLEM: Very short timeout - works locally, fails in slow CI');
-    console.log('   Code: page.setDefaultTimeout(1000);');
-    console.log('   Code: await expect(element).toBeVisible({ timeout: 500 });');
-    console.log('');
-    console.log('   Local: Page loads in ~300ms');
-    console.log('   CI: Page may take 2-5 seconds due to:');
-    console.log('       - Shared CPU (resource contention)');
-    console.log('       - Cold browser start');
-    console.log('       - Network variability');
-    console.log('');
     
     // ❌ Very short timeout - works locally, fails in slow CI
     page.setDefaultTimeout(1000);
@@ -101,15 +74,7 @@ test.describe('Infrastructure Demo - Failing Tests @fail', () => {
    * These tests spawn multiple browser contexts simultaneously
    */
   test('should handle multiple contexts - no resource consideration', async ({ browser }) => {
-    logResourceInfo('Multiple Contexts Test');
-    
     console.log('❌ PROBLEM: Opening 5 contexts simultaneously');
-    console.log(`   On this machine (${os.cpus().length} cores), this MIGHT work`);
-    console.log('   On CI (2 cores), this = disaster');
-    console.log('');
-    console.log('   Each context uses ~100-200MB RAM + CPU');
-    console.log('   5 contexts = 500MB-1GB RAM spike!');
-    console.log('');
     
     // ❌ Opening 5 contexts simultaneously on a 2-core CI machine = disaster
     const contexts = await Promise.all([
@@ -142,8 +107,6 @@ test.describe('Infrastructure Demo - Failing Tests @fail', () => {
    * Measures performance assuming consistent CPU
    */
   test('should complete within time limit - assumes fast CPU', async ({ page }) => {
-    logResourceInfo('Assumes Fast CPU Test');
-    
     console.log('❌ PROBLEM: Performance assertion assumes consistent CPU speed');
     console.log('   Code: expect(elapsed).toBeLessThan(1000);');
     console.log('');
@@ -173,8 +136,6 @@ test.describe('Infrastructure Demo - Failing Tests @fail', () => {
    * Test assumes local timezone or consistent clock
    */
   test('should validate timestamp - timezone dependent', async ({ page }) => {
-    logResourceInfo('Timezone Dependent Test');
-    
     await page.goto(BASE_URL);
     
     // ❌ PROBLEM: Uses local timezone
@@ -205,8 +166,6 @@ test.describe('Infrastructure Demo - Failing Tests @fail', () => {
    * Assumes fast, stable network connection
    */
   test('should fetch data - network timeout too short', async ({ page, request }) => {
-    logResourceInfo('Network Timeout Test');
-    
     console.log('❌ PROBLEM: 1 second timeout for API call');
     console.log('   Code: request.get(url, { timeout: 1000 });');
     console.log('');

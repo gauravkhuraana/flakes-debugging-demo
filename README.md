@@ -5,6 +5,7 @@
 | Failing Tests (Demo) | Fixed Tests |
 |---------------------|-------------|
 | ![Failing](https://github.com/gauravkhuraana/flakes-debugging-demo/actions/workflows/failing-tests.yml/badge.svg) | ![Passing](https://github.com/gauravkhuraana/flakes-debugging-demo/actions/workflows/passing-tests.yml/badge.svg) |
+| [📊 Failing Report](https://gauravkhurana.in/flakes-debugging-demo/failing-report/) | [📊 Passing Report](https://gauravkhurana.in/flakes-debugging-demo/passing-report/) |
 
 ---
 
@@ -38,7 +39,7 @@ Each test scenario has two versions:
 | **3-complex** | Advanced | S, F | State isolation & Filesystem paths |
 | **4-infrastructure** | Advanced | Resources | Container, CPU, memory constraints |
 | **5-dependencies** | Advanced | External | API mocking, service virtualization |
-| **6-debugging** | Reference | Methodology | 4-Step systematic debugging framework |
+| **6-debugging** | Reference | FLIP | FLIP systematic debugging framework |
 
 **Target Site:** [gauravkhurana.in/test-automation-play/](https://gauravkhurana.in/test-automation-play/)
 
@@ -56,6 +57,19 @@ A **proactive** approach to writing CI-resilient tests. Use this as a code revie
 | **K** | **Konfiguration & Constants** | URLs, viewport, ports, timezones | `localhost:3000` hardcoded | `baseURL` from config/env |
 | **E** | **External & Environment** | Env vars, APIs, CDNs, network | No retry on external calls | Retry + fallbacks |
 | **S** | **State & Shared Data** | Shared state, test order, caching | `const EMAIL = 'same@test.com'` | `createTestUser()` unique |
+
+## 🔄 FLIP Debugging Framework
+
+When flaky tests slip through, use **FLIP** to fix them:
+
+| Letter | Step | Action |
+|--------|------|--------|
+| **F** | **Find** | Reproduce consistently (run 5-10x with `--repeat-each`) |
+| **L** | **Localize** | Isolate with binary search (which step fails?) |
+| **I** | **Instrument** | Add logs, screenshots, timing evidence |
+| **P** | **Pattern** | Compare CI vs local, parallel vs serial |
+
+> 💡 **FLAKES** prevents CI failures. **FLIP** fixes them.
 
 ---
 
@@ -155,13 +169,13 @@ flakes-debugging-demo/
 │   ├── 5-dependencies/                # 🔌 External Services
 │   │   ├── external-services.fail.spec.ts # ❌ External API issues
 │   │   └── external-services.pass.spec.ts # ✅ Mocked services
-│   └── 6-debugging/                   # 🔍 Methodology
-│       └── systematic-debugging.spec.ts # 4-Step framework demo
+│   └── 6-debugging/                   # 🔍 FLIP Methodology
+│       └── systematic-debugging.spec.ts # FLIP framework demo
 ├── .github/workflows/
 │   ├── failing-tests.yml              # Demonstrates failures
 │   └── passing-tests.yml              # Demonstrates fixes
 └── docs/
-    ├── FLAKES-checklist.md            # Quick reference + 4-Step framework
+    ├── FLAKES-checklist.md            # Quick reference + FLIP framework
     └── FLAKES-decision-tree.md        # Debugging flowchart
 ```
 
@@ -231,19 +245,24 @@ Open `tests/5-dependencies/external-services.fail.spec.ts` for external API issu
 
 **Ask yourself:** *"What if the external API is slow, rate-limited, or down?"*
 
-### 6. Learn the 4-Step Debugging Framework 🆕
+### 6. Learn the FLIP Debugging Framework 🆕
 
 Open `tests/6-debugging/systematic-debugging.spec.ts` for the methodology.
 
-**The 4 Steps:**
-1. **Reproduce Reliably** — Run 5-10 times with `--repeat-each=5` (not 100!)
-2. **Isolate the Variable** — Binary search for the flaky step
-3. **Instrument Aggressively** — Add timestamps, screenshots, traces
-4. **Pattern Recognition** — Identify when/where failures occur
+> **FLAKES** prevents CI failures. **FLIP** fixes them.
+
+| Letter | Step | Action |
+|--------|------|--------|
+| **F** | **Find** | Reproduce consistently (run 5-10x with `--repeat-each=5`) |
+| **L** | **Localize** | Binary search for the flaky step |
+| **I** | **Instrument** | Add timestamps, screenshots, traces |
+| **P** | **Pattern** | Identify when/where failures occur |
 
 ---
 
-## 🔍 4-Step Debugging Framework - Decision Tree
+## � FLIP Debugging Framework - Decision Tree
+
+> **F**ind → **L**ocalize → **I**nstrument → **P**attern
 
 When a test is flaky, use this decision tree to find the root cause:
 
@@ -252,9 +271,9 @@ When a test is flaky, use this decision tree to find the root cause:
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │  STEP 1: REPRODUCE                       │
-        │  Run 5-10x: --repeat-each=5             │
-        │  Confirm it's actually flaky            │
+        │  F - FIND: REPRODUCE                     │
+        │  Run 5-10x: --repeat-each=5              │
+        │  Confirm it's actually flaky             │
         └─────────────────────────────────────────┘
                               │
               ┌───────────────┼───────────────┐
@@ -267,20 +286,20 @@ When a test is flaky, use this decision tree to find the root cause:
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │  STEP 2: ISOLATE                         │
+        │  L - LOCALIZE: ISOLATE                   │
         │  Break test into steps, find which fails │
         └─────────────────────────────────────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │  STEP 3: INSTRUMENT                      │
+        │  I - INSTRUMENT: ADD EVIDENCE            │
         │  Add timing logs, screenshots            │
         │  "You can't fix what you can't see!"    │
         └─────────────────────────────────────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │  STEP 4: PATTERN RECOGNITION             │
+        │  P - PATTERN: RECOGNITION                │
         │  Find the "why" - see tree below         │
         └─────────────────────────────────────────┘
                               │

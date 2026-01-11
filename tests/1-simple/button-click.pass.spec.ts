@@ -33,32 +33,20 @@ import * as os from 'os';
 
 const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 
-// 🔍 DEMO LOGGING: Show environment differences between local and CI
-function logEnvironmentInfo(testName: string) {
-  console.log('\n' + '═'.repeat(70));
-  console.log(`✅ GOOD PATTERN TEST: ${testName}`);
-  console.log('═'.repeat(70));
-  console.log(`💻 OS Platform:     ${process.platform}`);
-  console.log(`💻 OS Type:         ${os.type()}`);
-  console.log(`🔧 CI Environment:  ${process.env.CI || 'false (local)'}`);
-  console.log(`🔧 GitHub Actions:  ${process.env.GITHUB_ACTIONS || 'false'}`);
-  console.log(`⚡ CPU Cores:       ${os.cpus().length}`);
-  console.log(`💾 Total Memory:    ${Math.round(os.totalmem() / 1024 / 1024 / 1024)} GB`);
-  console.log(`💾 Free Memory:     ${Math.round(os.freemem() / 1024 / 1024 / 1024)} GB`);
-  console.log('═'.repeat(70) + '\n');
+// 🔍 Minimal logging - once per suite
+function logEnv() {
+  console.log(`\n✅ ${process.platform} | CI: ${process.env.CI || 'local'} | Cores: ${os.cpus().length} | RAM: ${Math.round(os.freemem() / 1024 / 1024 / 1024)}GB free\n`);
 }
 
 test.describe('Simple Demo - Passing Tests @pass', () => {
 
+  test.beforeAll(() => logEnv());
+
   test('should click button - with proper wait for tab content', async ({ page }) => {
-    logEnvironmentInfo('Click With Proper Wait Test');
-    
     // Navigate to main page
     await page.goto(BASE_URL);
     
     console.log('✅ FIX: Wait for tab to be visible before clicking');
-    console.log('   Code: await expect(basicTab).toBeVisible();');
-    console.log('');
     
     // ✅ FIX: Wait for tab to be visible before clicking
     const basicTab = page.locator('button', { hasText: 'Basic' });
@@ -84,8 +72,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('should fill form and submit - properly sequenced', async ({ page }) => {
-    logEnvironmentInfo('Properly Sequenced Form Test');
-    
     await page.goto(BASE_URL);
     
     console.log('✅ FIX: Wait for tab and click');
@@ -129,8 +115,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('should interact with disabled button - wait for state change', async ({ page }) => {
-    logEnvironmentInfo('State Verification Test');
-    
     await page.goto(BASE_URL);
     
     // Click Basic tab with proper wait
@@ -163,8 +147,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('should select from dropdown - with proper wait', async ({ page }) => {
-    logEnvironmentInfo('Dropdown With Proper Wait Test');
-    
     await page.goto(BASE_URL);
     
     // Click Basic tab with proper wait
@@ -198,8 +180,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('should check checkbox - with state verification', async ({ page }) => {
-    logEnvironmentInfo('Checkbox State Verification Test');
-    
     await page.goto(BASE_URL);
     
     // Click Basic tab with proper wait
@@ -236,8 +216,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   // ═══════════════════════════════════════════════════════════════════════════
 
   test('A1: await on page.fill() - action completes before assertion', async ({ page }) => {
-    logEnvironmentInfo('A1: Proper await on fill()');
-    
     await page.goto(BASE_URL);
     await page.click('button:has-text("Basic")');
     
@@ -257,8 +235,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('A2: await on page.click() - click completes before next action', async ({ page }) => {
-    logEnvironmentInfo('A2: Proper await on click()');
-    
     await page.goto(BASE_URL);
     
     console.log('✅ FIX: Always await page.click()');
@@ -275,8 +251,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('A3: await on expect() - assertion actually runs and validates', async ({ page }) => {
-    logEnvironmentInfo('A3: Proper await on expect()');
-    
     await page.goto(BASE_URL);
     await page.click('button:has-text("Basic")');
     
@@ -295,8 +269,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('A4: all actions awaited - predictable sequential execution', async ({ page }) => {
-    logEnvironmentInfo('A4: All actions properly awaited');
-    
     await page.goto(BASE_URL);
     
     console.log('✅ FIX: Await each action in sequence');
@@ -320,8 +292,6 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
   });
 
   test('A5: await promise immediately - capture values at right time', async ({ page }) => {
-    logEnvironmentInfo('A5: Await promises immediately');
-    
     await page.goto(BASE_URL);
     await page.click('button:has-text("Basic")');
     

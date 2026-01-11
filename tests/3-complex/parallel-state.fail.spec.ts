@@ -40,12 +40,7 @@ let sharedTestData: string[] = [];
 test.describe('State & Isolation Demo - BAD Patterns @fail', () => {
 
   test.beforeAll(() => {
-    console.log('\n' + '═'.repeat(60));
-    console.log('❌ STATE ISOLATION - BAD PATTERNS');
-    console.log('═'.repeat(60));
-    console.log('🎯 Focus: Shared state between tests');
-    console.log('📍 Problem: Parallel workers = unpredictable state');
-    console.log('═'.repeat(60) + '\n');
+    console.log(`\n❌ STATE ISOLATION - BAD: Shared state between parallel workers\n`);
   });
 
   /**

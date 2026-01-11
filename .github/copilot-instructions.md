@@ -85,25 +85,34 @@ await expect(element).toBeVisible();
 
 ---
 
-## 4-Step Debugging Playbook (When Flaky Tests Occur)
+## FLIP Debugging Framework (When Flaky Tests Occur)
+
+> **FLAKES** prevents CI failures. **FLIP** fixes them.
 
 If a test is flaky despite following FLAKES, use this systematic approach:
 
-### Step 1: Reproduce Reliably
+| Letter | Step | Action |
+|--------|------|--------|
+| **F** | **Find** | Reproduce consistently (5-10x) |
+| **L** | **Localize** | Binary search to isolate |
+| **I** | **Instrument** | Add logs, screenshots |
+| **P** | **Pattern** | CI vs local, parallel vs serial |
+
+### F - Find (Reproduce Reliably)
 ```bash
-npx playwright test --repeat-each=100 tests/path/to/test.spec.ts
+npx playwright test --repeat-each=5 tests/path/to/test.spec.ts
 ```
 
-### Step 2: Isolate the Variable
+### L - Localize (Isolate the Variable)
 Binary search—run each step alone to find the flaky one.
 
-### Step 3: Instrument Aggressively
+### I - Instrument (Add Evidence)
 ```typescript
 console.log(`[${Date.now()}] Before click`);
 await page.screenshot({ path: testInfo.outputPath('before-click.png') });
 ```
 
-### Step 4: Pattern Recognition
+### P - Pattern (Recognition)
 - Fails at specific times? → Load-related
 - Fails in CI only? → Resource/environment
 - Fails in parallel only? → State isolation

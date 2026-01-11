@@ -1,14 +1,16 @@
 /**
- * DEMO 6: The 4-Step Systematic Debugging Framework
+ * DEMO 6: The FLIP Systematic Debugging Framework
  * 
  * 🎯 PRACTICAL DEBUGGING TECHNIQUES FOR LIVE DEMO
  * 
  * This file shows REAL debugging techniques you can use TODAY:
  * 
- * STEP 1: Reproduce → Run 5-10x, not 100x (ain't nobody got time!)
- * STEP 2: Isolate   → Binary search to find the flaky step
- * STEP 3: Instrument → Add logging to see what's actually happening
- * STEP 4: Pattern   → Look for CI vs local, parallel vs serial
+ * F - Find:       Reproduce consistently (5-10x, not 100x!)
+ * L - Localize:   Binary search to find the flaky step
+ * I - Instrument: Add logging to see what's actually happening
+ * P - Pattern:    Look for CI vs local, parallel vs serial
+ * 
+ * 💡 FLAKES prevents CI failures. FLIP fixes them.
  * 
  * 🎬 DEMO COMMANDS (copy-paste ready):
  * 
@@ -36,13 +38,13 @@ const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 
 /**
  * ═══════════════════════════════════════════════════════════════════
- * STEP 1: REPRODUCE - Find the Flake (5-10 runs, not 100!)
+ * F - FIND: Reproduce the Flake (5-10 runs, not 100!)
  * ═══════════════════════════════════════════════════════════════════
  * 
  * 🎬 DEMO: npx playwright test --grep "flaky" --repeat-each=5
  */
 
-test.describe('Step 1: Reproduce the Flake', () => {
+test.describe('F - Find: Reproduce the Flake', () => {
   
   /**
    * 🎬 DEMO: This test is INTENTIONALLY FLAKY (~50% fail rate)
@@ -123,7 +125,7 @@ test.describe('Step 1: Reproduce the Flake', () => {
 
 /**
  * ═══════════════════════════════════════════════════════════════════
- * STEP 2: ISOLATE - Binary Search for the Problem
+ * L - LOCALIZE: Binary Search for the Problem
  * ═══════════════════════════════════════════════════════════════════
  * 
  * 🎬 DEMO: Run each step alone to find which one fails
@@ -131,7 +133,7 @@ test.describe('Step 1: Reproduce the Flake', () => {
  * Command: npx playwright test --grep "isolate" --headed
  */
 
-test.describe('Step 2: Isolate the Problem', () => {
+test.describe('L - Localize: Isolate the Problem', () => {
   
   test('isolate-1: just navigation', async ({ page }) => {
     console.log('🔍 Testing: Can we load the page?');
@@ -175,7 +177,7 @@ test.describe('Step 2: Isolate the Problem', () => {
 
 /**
  * ═══════════════════════════════════════════════════════════════════
- * STEP 3: INSTRUMENT - Add Logging to See What's Happening
+ * I - INSTRUMENT: Add Logging to See What's Happening
  * ═══════════════════════════════════════════════════════════════════
  * 
  * 💡 KEY INSIGHT: "You can't fix what you can't see!"
@@ -190,7 +192,7 @@ test.describe('Step 2: Isolate the Problem', () => {
  * Command: npx playwright test --grep "instrument" --headed
  */
 
-test.describe('Step 3: Instrument with Logging', () => {
+test.describe('I - Instrument: Add Logging', () => {
   
   /**
    * 🎬 DEMO: Run this headed to see timing in console
@@ -255,7 +257,7 @@ test.describe('Step 3: Instrument with Logging', () => {
 
 /**
  * ═══════════════════════════════════════════════════════════════════
- * STEP 4: PATTERN RECOGNITION - CI vs Local, Parallel vs Serial
+ * P - PATTERN: Recognition - CI vs Local, Parallel vs Serial
  * ═══════════════════════════════════════════════════════════════════
  * 
  * 💡 KEY INSIGHT: "Same test, different results? Find the PATTERN!"
@@ -275,7 +277,7 @@ test.describe('Step 3: Instrument with Logging', () => {
  * 🎬 DEMO: See what's different between environments
  */
 
-test.describe('Step 4: Pattern Recognition', () => {
+test.describe('P - Pattern: Recognition', () => {
   
   /**
    * 🎬 DEMO: Print environment info

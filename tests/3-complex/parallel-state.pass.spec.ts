@@ -27,12 +27,7 @@ const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 test.describe('State & Isolation Demo - GOOD Patterns @pass', () => {
 
   test.beforeAll(() => {
-    console.log('\n' + '═'.repeat(60));
-    console.log('✅ STATE ISOLATION - GOOD PATTERNS');
-    console.log('═'.repeat(60));
-    console.log('🎯 Focus: Isolated state per test');
-    console.log('📍 Solution: Local variables, unique files, self-contained');
-    console.log('═'.repeat(60) + '\n');
+    console.log(`\n✅ STATE ISOLATION - GOOD: Local variables, unique files, self-contained\n`);
   });
 
   /**

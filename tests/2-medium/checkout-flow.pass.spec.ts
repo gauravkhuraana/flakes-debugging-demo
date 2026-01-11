@@ -23,26 +23,14 @@ import * as os from 'os';
 // ✅ GOOD: Config-driven URL with fallback
 const BASE_URL = process.env.BASE_URL || 'https://gauravkhurana.in/test-automation-play/';
 
-// Print environment info once
-let envPrinted = false;
+// Minimal logging - once per suite
+function logEnv() {
+  console.log(`\n✅ ${process.platform} | CI: ${process.env.CI || 'local'} | user: ${os.userInfo().username}\n`);
+}
 
 test.describe('Environment & Config Demo - GOOD Patterns @pass', () => {
 
-  test.beforeAll(() => {
-    if (envPrinted) return;
-    envPrinted = true;
-    
-    console.log('\n' + '═'.repeat(60));
-    console.log('✅ ENVIRONMENT INFO - GOOD PATTERNS');
-    console.log('═'.repeat(60));
-    console.log(`💻 Platform:     ${process.platform}`);
-    console.log(`🔢 CPU Cores:    ${os.cpus().length}`);
-    console.log(`🧠 Free RAM:     ${(os.freemem() / (1024 ** 3)).toFixed(2)} GB`);
-    console.log(`👤 os.userInfo(): ${os.userInfo().username}`);
-    console.log(`🏠 os.homedir():  ${os.homedir()}`);
-    console.log(`🔧 CI:           ${process.env.CI || 'false'}`);
-    console.log('═'.repeat(60) + '\n');
-  });
+  test.beforeAll(() => logEnv());
 
   /**
    * ✅ GOOD PATTERN 1: Environment variable WITH fallback

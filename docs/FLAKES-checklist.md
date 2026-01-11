@@ -218,11 +218,20 @@ CI Failure
 
 ---
 
-## 🔧 The 4-Step Debugging Framework
+## � The FLIP Debugging Framework
+
+> **FLAKES** prevents CI failures. **FLIP** fixes them.
 
 When FLAKES doesn't immediately solve it, use this systematic approach:
 
-### Step 1: Reproduce Reliably
+| Letter | Step | Action |
+|--------|------|--------|
+| **F** | **Find** | Reproduce consistently (run 5-10x) |
+| **L** | **Localize** | Isolate with binary search |
+| **I** | **Instrument** | Add logs, screenshots, timing |
+| **P** | **Pattern** | Compare CI vs local, parallel vs serial |
+
+### F - Find (Reproduce Reliably)
 ```bash
 # Run the test 100 times to confirm flakiness
 npx playwright test --repeat-each=100 failing-test.spec.ts
@@ -232,7 +241,7 @@ npx playwright test --repeat-each=50 --workers=1   # Sequential
 npx playwright test --repeat-each=20 --project=chromium --project=firefox
 ```
 
-### Step 2: Isolate the Variable
+### L - Localize (Isolate the Variable)
 ```javascript
 // Binary search - run each step alone
 test('step 1 - navigation', async ({ page }) => {
@@ -251,7 +260,7 @@ test('step 3 - click', async ({ page }) => {
 });
 ```
 
-### Step 3: Instrument Aggressively
+### I - Instrument (Aggressively)
 ```javascript
 const startTime = Date.now();
 const log = (msg) => console.log(`[${Date.now() - startTime}ms] ${msg}`);
@@ -269,7 +278,7 @@ await context.tracing.start({ screenshots: true, snapshots: true });
 await context.tracing.stop({ path: 'trace.zip' });
 ```
 
-### Step 4: Pattern Recognition
+### P - Pattern (Recognition)
 
 Ask these questions:
 - [ ] Does it fail at specific times? (load-related)

@@ -25,26 +25,14 @@ import * as os from 'os';
 
 const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 
-// Print environment info once
-let envPrinted = false;
+// Minimal logging - once per suite
+function logEnv() {
+  console.log(`\n❌ ${process.platform} | CI: ${process.env.CI || 'local'} | USERNAME: ${process.env.USERNAME ?? 'NOT SET'}\n`);
+}
 
 test.describe('Environment & Config Demo - BAD Patterns @fail', () => {
 
-  test.beforeAll(() => {
-    if (envPrinted) return;
-    envPrinted = true;
-    
-    console.log('\n' + '═'.repeat(60));
-    console.log('❌ ENVIRONMENT INFO - BAD PATTERNS');
-    console.log('═'.repeat(60));
-    console.log(`💻 Platform:     ${process.platform}`);
-    console.log(`🔢 CPU Cores:    ${os.cpus().length}`);
-    console.log(`🧠 Free RAM:     ${(os.freemem() / (1024 ** 3)).toFixed(2)} GB`);
-    console.log(`👤 USERNAME:     ${process.env.USERNAME ?? 'NOT SET (Linux!)'}`);
-    console.log(`🏠 USERPROFILE:  ${process.env.USERPROFILE ?? 'NOT SET (Linux!)'}`);
-    console.log(`🔧 CI:           ${process.env.CI || 'false'}`);
-    console.log('═'.repeat(60) + '\n');
-  });
+  test.beforeAll(() => logEnv());
 
   /**
    * ❌ BAD PATTERN 1: Windows-specific environment variable
@@ -164,7 +152,7 @@ test.describe('Environment & Config Demo - BAD Patterns @fail', () => {
     
     // ❌ BAD: Hardcoded localhost - no server in CI
     await page.goto('http://localhost:3000/', { timeout: 5000 });
-    await expect(page.getByRole('tab', { name: 'Business' })).toBeVisible();
+    await expect(page.getByText('start here')).toBeVisible();
   });
 
 });

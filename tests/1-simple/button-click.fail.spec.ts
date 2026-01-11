@@ -126,7 +126,7 @@ test.describe('Simple Demo - Failing Tests @fail', () => {
     input.fill('Async Test');  // <-- NO AWAIT! Fill starts but doesn't wait
     
     // Short timeout doesn't give fill() time to complete in slow CI
-    await expect(input).toHaveValue('Async Test', { timeout: 50 });  // Only 50ms!
+    await expect(input).toHaveValue('Async Test', { timeout: 20 });  // Only 50ms!
   });
 
   test('A2: missing await + short timeout - click not complete in time', async ({ page }) => {
