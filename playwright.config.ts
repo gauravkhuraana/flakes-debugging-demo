@@ -1,6 +1,17 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
+ * Load environment variables from .env file
+ * 
+ * ⚠️  THIS IS THE E (Environment) PATTERN FROM FLAKES:
+ *   - Locally: .env file exists, all vars are loaded
+ *   - CI: No .env file! Must use CI secrets instead
+ *   - This is why tests "pass locally, fail in CI"
+ */
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+/**
  * Playwright Configuration for FLAKES Debugging Demo
  * 
  * This config demonstrates best practices for CI-friendly test setup.

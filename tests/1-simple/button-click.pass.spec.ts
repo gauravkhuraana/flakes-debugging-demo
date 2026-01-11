@@ -231,4 +231,117 @@ test.describe('Simple Demo - Passing Tests @pass', () => {
     console.log('   ✅ Test passed! Auto-retrying assertions handle timing');
   });
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🅰️ ASYNC OPERATION DEMOS - Proper "A" from FLAKES (Fixed Versions)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  test('A1: await on page.fill() - action completes before assertion', async ({ page }) => {
+    logEnvironmentInfo('A1: Proper await on fill()');
+    
+    await page.goto(BASE_URL);
+    await page.click('button:has-text("Basic")');
+    
+    const input = page.getByPlaceholder('Enter your first name');
+    await expect(input).toBeVisible();
+    
+    console.log('✅ FIX: Always await page.fill()');
+    console.log('   Code: await input.fill("Async Test");');
+    console.log('');
+    
+    // ✅ FIX: Properly await the fill action
+    await input.fill('Async Test');
+    
+    // Assertion runs AFTER fill completes
+    await expect(input).toHaveValue('Async Test');
+    console.log('   ✅ Value verified after awaited fill');
+  });
+
+  test('A2: await on page.click() - click completes before next action', async ({ page }) => {
+    logEnvironmentInfo('A2: Proper await on click()');
+    
+    await page.goto(BASE_URL);
+    
+    console.log('✅ FIX: Always await page.click()');
+    console.log('   Code: await page.click("button:has-text(\\"Basic\\")");');
+    console.log('');
+    
+    // ✅ FIX: Properly await the click action
+    await page.click('button:has-text("Basic")');
+    
+    // Tab content is now loaded
+    const input = page.getByPlaceholder('Enter your first name');
+    await expect(input).toBeVisible();
+    console.log('   ✅ Element visible after awaited click');
+  });
+
+  test('A3: await on expect() - assertion actually runs and validates', async ({ page }) => {
+    logEnvironmentInfo('A3: Proper await on expect()');
+    
+    await page.goto(BASE_URL);
+    await page.click('button:has-text("Basic")');
+    
+    const input = page.getByPlaceholder('Enter your first name');
+    await input.fill('Test Value');
+    
+    console.log('✅ FIX: Always await expect() with locators');
+    console.log('   Code: await expect(input).toHaveValue("Test Value");');
+    console.log('   Without await, the assertion is fire-and-forget!');
+    console.log('');
+    
+    // ✅ FIX: Properly await the expect - assertion actually runs!
+    await expect(input).toHaveValue('Test Value');
+    
+    console.log('   ✅ Assertion completed and validated');
+  });
+
+  test('A4: all actions awaited - predictable sequential execution', async ({ page }) => {
+    logEnvironmentInfo('A4: All actions properly awaited');
+    
+    await page.goto(BASE_URL);
+    
+    console.log('✅ FIX: Await each action in sequence');
+    console.log('   Each action completes before the next starts');
+    console.log('');
+    
+    // ✅ FIX: Properly await each action in sequence
+    await page.click('button:has-text("Basic")');
+    console.log('   1. Tab clicked ✓');
+    
+    await page.getByPlaceholder('Enter your first name').fill('Race');
+    console.log('   2. First name filled ✓');
+    
+    await page.getByPlaceholder('Enter your last name').fill('Condition');
+    console.log('   3. Last name filled ✓');
+    
+    // Actions complete in order, assertions pass reliably
+    await expect(page.getByPlaceholder('Enter your first name')).toHaveValue('Race');
+    await expect(page.getByPlaceholder('Enter your last name')).toHaveValue('Condition');
+    console.log('   ✅ All values verified in predictable order');
+  });
+
+  test('A5: await promise immediately - capture values at right time', async ({ page }) => {
+    logEnvironmentInfo('A5: Await promises immediately');
+    
+    await page.goto(BASE_URL);
+    await page.click('button:has-text("Basic")');
+    
+    const input = page.getByPlaceholder('Enter your first name');
+    
+    console.log('✅ FIX: Await the action before capturing values');
+    console.log('   Code: await input.fill("Promise Value");');
+    console.log('   Then: const currentValue = await input.inputValue();');
+    console.log('');
+    
+    // ✅ FIX: Await fill BEFORE capturing the value
+    await input.fill('Promise Value');
+    
+    // Now the value is correct
+    const currentValue = await input.inputValue();
+    console.log(`   Value after fill: "${currentValue}"`);
+    
+    // Assertion passes because we captured at the right time
+    expect(currentValue).toBe('Promise Value');
+    console.log('   ✅ Value captured after await - correct!');
+  });
+
 });

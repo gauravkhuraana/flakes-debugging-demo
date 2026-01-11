@@ -1,98 +1,46 @@
 /**
- * DEMO 3: Complex - GOOD PATTERNS (Pass both locally AND in CI)
+ * DEMO 3: S (State & Shared Data) - GOOD PATTERNS
  * 
- * FLAKES Categories: S (State/Shared) + A (Async) + K (Konfiguration)
+ * FLAKES Category: S (State/Shared) ONLY
+ * 
+ * ═══════════════════════════════════════════════════════════════
+ * 🎯 THIS FILE FOCUSES EXCLUSIVELY ON STATE ISOLATION FIXES
+ * ═══════════════════════════════════════════════════════════════
  * 
  * ✅ WHY THESE PASS EVERYWHERE:
  * 
- * These patterns work on any machine because:
- *   - Always await async operations
- *   - Generous timeouts for slow CI
- *   - Isolated state per test (no shared mutable data)
- *   - No test order dependencies
+ * These patterns work because each test is ISOLATED:
+ *   - Local variables instead of shared mutable state
  *   - Unique files per test (no write conflicts)
- *   - No timing assertions (test behavior, not speed)
+ *   - Self-contained setup (no test order dependencies)
  * 
  * 💡 Compare with parallel-state.fail.spec.ts to see the problems!
  * 
- * @tags @pass @complex @state @parallel
+ * @tags @pass @state @parallel @isolation
  */
 
 import { test, expect } from '@playwright/test';
-import * as os from 'os';
 import * as fs from 'fs';
-import * as path from 'path';
 
 const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
 
-// Print environment info once
-let envPrinted = false;
-
-test.describe('Parallel & State Demo - GOOD Patterns @pass', () => {
+test.describe('State & Isolation Demo - GOOD Patterns @pass', () => {
 
   test.beforeAll(() => {
-    if (envPrinted) return;
-    envPrinted = true;
-    
     console.log('\n' + '═'.repeat(60));
-    console.log('✅ ENVIRONMENT INFO - GOOD PATTERNS');
+    console.log('✅ STATE ISOLATION - GOOD PATTERNS');
     console.log('═'.repeat(60));
-    console.log(`💻 Platform:     ${process.platform}`);
-    console.log(`🔢 CPU Cores:    ${os.cpus().length}`);
-    console.log(`🧠 Free RAM:     ${(os.freemem() / (1024 ** 3)).toFixed(2)} GB`);
-    console.log(`🔧 CI:           ${process.env.CI || 'false'}`);
+    console.log('🎯 Focus: Isolated state per test');
+    console.log('📍 Solution: Local variables, unique files, self-contained');
     console.log('═'.repeat(60) + '\n');
   });
 
   /**
-   * ✅ GOOD PATTERN 1: Always await async operations
-   * 
-   * Fix: Every Playwright action is async - always await!
-   */
-  test('Test 1: Proper await prevents race conditions', async ({ page }) => {
-    await page.goto(BASE_URL);
-    
-    const businessTab = page.getByRole('tab', { name: 'Business' });
-    await expect(businessTab).toBeVisible();
-    await businessTab.click();
-    
-    const input = page.getByTestId('login-username');
-    await expect(input).toBeVisible();
-    
-    console.log('✅ GOOD: Always await async operations');
-    console.log('   await input.fill() - waits for completion');
-    console.log('   await expect() - waits for condition');
-    
-    // ✅ GOOD: Proper await ensures fill completes
-    await input.fill('testuser');
-    
-    // ✅ GOOD: Await on assertion waits for value
-    await expect(input).toHaveValue('testuser');
-  });
-
-  /**
-   * ✅ GOOD PATTERN 2: Generous timeout for CI network
-   * 
-   * Fix: Use timeouts that work on slow CI (10-30 seconds)
-   */
-  test('Test 2: Generous timeout for slow CI', async ({ page }) => {
-    console.log('✅ GOOD: Generous timeouts (30s page, 10s element)');
-    console.log('   Works on fast local AND slow CI');
-    
-    // ✅ GOOD: 30 second timeout handles slow CI network
-    await page.goto(BASE_URL, { timeout: 30000 });
-    
-    const tab = page.getByRole('tab', { name: 'Business' });
-    // ✅ GOOD: 10 second timeout for element visibility
-    await expect(tab).toBeVisible({ timeout: 10000 });
-  });
-
-  /**
-   * ✅ GOOD PATTERN 3: Isolated state per test
+   * ✅ GOOD PATTERN 1: Isolated state per test
    * 
    * Fix: Each test creates its own state - no sharing!
    */
-  test('Test 3: Isolated state - own counter', async ({ page }) => {
+  test('Test 1: Isolated state - own counter', async ({ page }) => {
     // ✅ GOOD: Local variable, not shared
     let localCounter = 0;
     localCounter++;
@@ -107,7 +55,7 @@ test.describe('Parallel & State Demo - GOOD Patterns @pass', () => {
     expect(localCounter).toBe(1);
   });
 
-  test('Test 3a: Isolated state - independent counter', async ({ page }) => {
+  test('Test 1a: Isolated state - independent counter', async ({ page }) => {
     // ✅ GOOD: Its own local counter
     let localCounter = 0;
     localCounter++;
@@ -123,34 +71,11 @@ test.describe('Parallel & State Demo - GOOD Patterns @pass', () => {
   });
 
   /**
-   * ✅ GOOD PATTERN 4: Test behavior, not timing
+   * ✅ GOOD PATTERN 2: Unique file per test
    * 
-   * Fix: Assert that something happened correctly, not how fast
+   * Fix: Use unique filename with testInfo to avoid conflicts
    */
-  test('Test 4: Assert behavior, not timing', async ({ page }) => {
-    await page.goto(BASE_URL);
-    
-    await page.getByRole('tab', { name: 'Business' }).click();
-    const username = page.getByTestId('login-username');
-    
-    console.log('✅ GOOD: Assert behavior, not timing');
-    console.log('   Test WHAT happened, not HOW FAST');
-    console.log('   Works on fast and slow machines');
-    
-    // ✅ GOOD: Assert visibility with generous timeout
-    await expect(username).toBeVisible({ timeout: 10000 });
-    
-    // ✅ GOOD: Assert that interaction works
-    await username.fill('admin');
-    await expect(username).toHaveValue('admin');
-  });
-
-  /**
-   * ✅ GOOD PATTERN 5: Unique file per test
-   * 
-   * Fix: Use unique filename with timestamp/random to avoid conflicts
-   */
-  test('Test 5: Unique file prevents write conflict', async ({ page }, testInfo) => {
+  test('Test 2: Unique file prevents write conflict', async ({ page }, testInfo) => {
     // ✅ GOOD: Unique file name using testInfo
     const uniqueFilePath = testInfo.outputPath('test-data.json');
     
@@ -159,39 +84,39 @@ test.describe('Parallel & State Demo - GOOD Patterns @pass', () => {
     console.log('   testInfo.outputPath() creates unique path per test');
     
     // ✅ GOOD: Each test has its own file, no conflicts
-    const testData = { testId: 'test5', timestamp: Date.now() };
+    const testData = { testId: 'test2', timestamp: Date.now() };
     fs.writeFileSync(uniqueFilePath, JSON.stringify(testData));
     
     await page.goto(BASE_URL);
     
     // ✅ GOOD: Reading our own unique file
     const readData = JSON.parse(fs.readFileSync(uniqueFilePath, 'utf-8'));
-    expect(readData.testId).toBe('test5');
+    expect(readData.testId).toBe('test2');
   });
 
-  test('Test 5a: Unique file - no conflict with Test 5', async ({ page }, testInfo) => {
+  test('Test 2a: Unique file - no conflict with Test 2', async ({ page }, testInfo) => {
     // ✅ GOOD: Different unique file for this test
     const uniqueFilePath = testInfo.outputPath('test-data.json');
     
     console.log('✅ GOOD: Each test has its own unique file');
     console.log(`   File: ${uniqueFilePath}`);
     
-    const testData = { testId: 'test5a', timestamp: Date.now() };
+    const testData = { testId: 'test2a', timestamp: Date.now() };
     fs.writeFileSync(uniqueFilePath, JSON.stringify(testData));
     
     await page.goto(BASE_URL);
     
-    // ✅ GOOD: Our own file, not affected by Test 5
+    // ✅ GOOD: Our own file, not affected by Test 2
     const readData = JSON.parse(fs.readFileSync(uniqueFilePath, 'utf-8'));
-    expect(readData.testId).toBe('test5a');
+    expect(readData.testId).toBe('test2a');
   });
 
   /**
-   * ✅ GOOD PATTERN 6: No test order dependency
+   * ✅ GOOD PATTERN 3: No test order dependency
    * 
    * Fix: Each test sets up its own data in beforeEach or within test
    */
-  test('Test 6: Self-contained test with own setup', async ({ page }) => {
+  test('Test 3: Self-contained test with own setup', async ({ page }) => {
     // ✅ GOOD: Test sets up its own data
     const localTestData = ['setup-data'];
     
@@ -205,8 +130,8 @@ test.describe('Parallel & State Demo - GOOD Patterns @pass', () => {
     expect(localTestData).toContain('setup-data');
   });
 
-  test('Test 6a: Also self-contained, no dependency', async ({ page }) => {
-    // ✅ GOOD: Own setup, no dependency on Test 6
+  test('Test 3a: Also self-contained, no dependency', async ({ page }) => {
+    // ✅ GOOD: Own setup, no dependency on Test 3
     const localTestData = ['other-data'];
     
     console.log('✅ GOOD: Independent of other tests');
@@ -223,22 +148,23 @@ test.describe('Parallel & State Demo - GOOD Patterns @pass', () => {
 
 /**
  * ═══════════════════════════════════════════════════════════════
- * SUMMARY: How these are fixed
+ * SUMMARY: S (State & Shared Data) - How these are fixed
  * ═══════════════════════════════════════════════════════════════
  * 
- * Test 1: ✅ Always await async operations
- * Test 2: ✅ Generous timeouts (30s page, 10s element)
- * Test 3/3a: ✅ Isolated state per test (local variables)
- * Test 4: ✅ Assert behavior, not timing
- * Test 5/5a: ✅ Unique file per test (testInfo.outputPath)
- * Test 6/6a: ✅ Self-contained tests with own setup
+ * Test 1/1a: ✅ Isolated state per test (local variables)
+ * Test 2/2a: ✅ Unique file per test (testInfo.outputPath)
+ * Test 3/3a: ✅ Self-contained tests with own setup
  * 
- * 📋 CODE REVIEW CHECKLIST:
- *   □ All async operations awaited?
- *   □ Generous timeouts (10s+ for elements)?
- *   □ No shared mutable state between tests?
- *   □ No timing assertions?
- *   □ Unique file paths per test?
+ * 🔑 KEY INSIGHT: Each test must be ISOLATED!
+ *    - No shared mutable variables
+ *    - No shared files
+ *    - No test order dependencies
+ * 
+ * 📋 STATE ISOLATION CHECKLIST:
+ *   □ No module-level mutable variables?
+ *   □ Using local variables instead of shared state?
+ *   □ Unique file paths per test (testInfo.outputPath)?
  *   □ Each test self-contained (no order dependency)?
+ *   □ Using beforeEach for shared setup instead of beforeAll?
  * ═══════════════════════════════════════════════════════════════
  */

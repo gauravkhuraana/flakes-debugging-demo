@@ -171,6 +171,90 @@ test.describe('Environment & Config Demo - BAD Patterns @fail', () => {
 
 /**
  * ═══════════════════════════════════════════════════════════════
+ * 🖥️ VIEWPORT TESTS - K (Konfiguration Drift)
+ * 
+ * These tests demonstrate viewport-related flakiness
+ * ═══════════════════════════════════════════════════════════════
+ */
+test.describe('Viewport Demo - BAD Patterns @fail', () => {
+
+  /**
+   * ❌ BAD PATTERN 6: No viewport set - relies on default
+   * 
+   * Problem: CI may use different default viewport than local
+   * Local:   Your browser window size (e.g., 1920x1080)
+   * CI:      Headless default (often 800x600 or 1280x720)
+   * 
+   * Elements may be hidden/visible depending on viewport!
+   */
+  test('Test 6: No viewport - element visibility varies', async ({ page }) => {
+    // ❌ BAD: No viewport set - using whatever default
+    const viewportSize = page.viewportSize();
+    console.log('❌ BAD: No explicit viewport set');
+    console.log(`   Current viewport: ${viewportSize?.width}x${viewportSize?.height}`);
+    console.log('   Local might be 1920x1080, CI might be 800x600');
+    console.log('   Responsive elements behave differently!');
+    
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // This element might be in a hamburger menu on narrow viewports
+    // or visible on wide viewports - unpredictable!
+    const dashboardLink = page.getByRole('link', { name: 'Dashboard' });
+    
+    // ❌ BAD: No viewport control - may pass or fail based on default
+    await expect(dashboardLink).toBeVisible({ timeout: 2000 });
+  });
+
+  /**
+   * ❌ BAD PATTERN 7: Mobile viewport without adapting selectors
+   * 
+   * Problem: Test written for desktop, but viewport is mobile
+   * Desktop elements hidden, mobile menu not handled
+   */
+  test('Test 7: Wrong viewport for test assumptions', async ({ page }) => {
+    // ❌ BAD: Set mobile viewport but use desktop selectors
+    await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE
+    
+    console.log('❌ BAD: Mobile viewport (375x667) with desktop selectors');
+    console.log('   Desktop navigation hidden on mobile');
+    console.log('   Need to click hamburger menu first!');
+    
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // ❌ BAD: Desktop checkout button - hidden on mobile!
+    const checkoutBtn = page.getByRole('button', { name: 'Checkout' });
+    await expect(checkoutBtn).toBeVisible({ timeout: 2000 });
+  });
+
+  /**
+   * ❌ BAD PATTERN 8: Viewport changes mid-test without re-checking
+   * 
+   * Problem: Elements found before resize may not be visible after
+   */
+  test('Test 8: Viewport resize without re-validation', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // Find element on desktop viewport
+    const sidebar = page.getByTestId('sidebar-nav');
+    console.log('❌ BAD: Finding element, then resizing viewport');
+    
+    // ❌ BAD: Resize to mobile AFTER finding element
+    await page.setViewportSize({ width: 375, height: 667 });
+    
+    console.log('   Sidebar was visible at 1280px, now hidden at 375px');
+    
+    // ❌ BAD: Sidebar hidden on mobile - this fails!
+    await expect(sidebar).toBeVisible({ timeout: 2000 });
+  });
+
+});
+
+/**
+ * ═══════════════════════════════════════════════════════════════
  * SUMMARY: Why these fail in CI
  * ═══════════════════════════════════════════════════════════════
  * 
@@ -179,6 +263,9 @@ test.describe('Environment & Config Demo - BAD Patterns @fail', () => {
  * Test 3: Timing varies - never assert on duration
  * Test 4: USERNAME/USERPROFILE are Windows-only
  * Test 5: No localhost server running in CI
+ * Test 6: No viewport set - CI uses different default
+ * Test 7: Mobile viewport but desktop selectors
+ * Test 8: Viewport resize breaks element visibility
  * 
  * ➡️ See checkout-flow.pass.spec.ts for the FIXED versions!
  * ═══════════════════════════════════════════════════════════════

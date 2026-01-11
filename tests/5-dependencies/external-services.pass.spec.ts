@@ -1,22 +1,25 @@
 /**
- * DEMO 5: Dependencies - BEST PRACTICES (CI-Resilient Patterns)
+ * DEMO 5: Dependencies + Environment - BEST PRACTICES (CI-Resilient Patterns)
  * 
  * 🎯 PROMOTIONAL PROMISE COVERAGE:
  * "You will learn how... dependencies... impact test behavior"
  * 
- * ✅ COVERS PLAYBOOK SOLUTIONS FOR: External Dependencies (20% of flakiness)
+ * ✅ COVERS PLAYBOOK SOLUTIONS FOR: 
+ *   - External Dependencies (20% of flakiness)
+ *   - E from FLAKES: Environment Variables & Secrets
+ * 
+ * ✅ DEPENDENCY PATTERNS:
  *   - Service virtualization/mocking
  *   - Retry logic with exponential backoff
  *   - Dynamic port allocation
  *   - Stable test data
  * 
- * ✅ THESE PATTERNS WORK RELIABLY IN BOTH LOCAL AND CI:
- * 
- * Why these are CI-resilient:
- *   - Mock external services for predictable responses
- *   - Retry logic handles transient failures
- *   - Dynamic ports avoid conflicts
- *   - No assertions on volatile external data
+ * ✅ ENVIRONMENT PATTERNS (E from FLAKES):
+ *   - Skip tests gracefully when secrets missing
+ *   - Fallback values for credentials
+ *   - Mock third-party services (no real API keys)
+ *   - CI-aware environment detection
+ *   - Feature flags with sensible defaults
  * 
  * 🎯 PROACTIVE PATTERNS TO USE:
  *   ✅ Mock external APIs with page.route()
@@ -220,6 +223,191 @@ test.describe('Dependencies Demo - Passing Tests @pass', () => {
     // ✅ GOOD: Assert on success, not timing
     expect(response.ok()).toBeTruthy();
     // ✅ DON'T assert on timing - it varies by location
+  });
+
+});
+
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * 🔐 ENVIRONMENT VARIABLES & SECRETS - E from FLAKES (FIXED)
+ * 
+ * These tests demonstrate proper handling of secrets/env vars
+ * ═══════════════════════════════════════════════════════════════
+ */
+test.describe('Environment & Secrets Demo - GOOD Patterns @pass', () => {
+
+  /**
+   * ✅ GOOD PATTERN E1: API key with fallback or skip
+   * 
+   * Check if key exists, skip test gracefully if not
+   */
+  test('E1: API key with fallback - skip if not available', async ({ request }) => {
+    // ✅ GOOD: Check and handle missing API key
+    const apiKey = process.env.API_KEY;
+    
+    console.log('✅ GOOD: Check API_KEY before using');
+    console.log(`   API_KEY = ${apiKey ? '[SET]' : 'undefined'}`);
+    
+    if (!apiKey) {
+      console.log('   ⏭️ Skipping: API_KEY not configured');
+      console.log('   To run: set API_KEY in CI secrets or .env');
+      test.skip();
+      return;
+    }
+    
+    // ✅ GOOD: Only runs if API key exists
+    console.log('   ✅ API_KEY found, proceeding with test');
+    expect(apiKey).toBeDefined();
+  });
+
+  /**
+   * ✅ GOOD PATTERN E2: Database credentials with test fallback
+   * 
+   * Use test database if production creds not available
+   */
+  test('E2: Database credentials with test fallback', async ({ page }) => {
+    // ✅ GOOD: Fallback to test database
+    const dbUrl = process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/testdb';
+    const dbPassword = process.env.DB_PASSWORD || 'test-password';
+    
+    console.log('✅ GOOD: Database credentials with fallback');
+    console.log(`   DATABASE_URL = ${process.env.DATABASE_URL ? '[FROM ENV]' : '[FALLBACK]'}`);
+    console.log(`   DB_PASSWORD = ${process.env.DB_PASSWORD ? '[FROM ENV]' : '[FALLBACK]'}`);
+    console.log('   Production: Uses real credentials from secrets');
+    console.log('   Local/CI: Falls back to test database');
+    
+    // ✅ GOOD: Always has a value
+    expect(dbUrl).toBeDefined();
+    expect(dbPassword).toBeDefined();
+    
+    await page.goto(BASE_URL);
+  });
+
+  /**
+   * ✅ GOOD PATTERN E3: Mock third-party services in tests
+   * 
+   * Don't use real Stripe/Twilio in tests - mock them!
+   */
+  test('E3: Third-party services mocked', async ({ page }) => {
+    console.log('✅ GOOD: Mock third-party services instead of using real keys');
+    console.log('   No STRIPE_SECRET_KEY needed - mock the API!');
+    console.log('   No TWILIO_ACCOUNT_SID needed - mock the response!');
+    
+    // ✅ GOOD: Mock the payment API response
+    await page.route('**/api/stripe/**', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'pi_mock_123',
+          status: 'succeeded',
+          amount: 1000,
+        }),
+      });
+    });
+    
+    // ✅ GOOD: Mock SMS/email service
+    await page.route('**/api/notifications/**', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ sent: true, messageId: 'mock-msg-123' }),
+      });
+    });
+    
+    await page.goto(BASE_URL);
+    
+    // ✅ GOOD: Test works without any real API keys!
+    expect(true).toBe(true);
+  });
+
+  /**
+   * ✅ GOOD PATTERN E4: Check CI context properly
+   * 
+   * Handle both local and CI environments
+   */
+  test('E4: CI-aware environment detection', async ({ page }) => {
+    // ✅ GOOD: Check if we're in CI
+    const isCI = process.env.CI === 'true';
+    const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+    
+    console.log('✅ GOOD: Detect environment, adapt behavior');
+    console.log(`   CI = ${isCI}`);
+    console.log(`   GitHub Actions = ${isGitHubActions}`);
+    
+    if (isGitHubActions) {
+      // ✅ GOOD: CI-specific assertions
+      console.log('   Running in GitHub Actions');
+      console.log(`   GITHUB_ACTOR = ${process.env.GITHUB_ACTOR}`);
+      console.log(`   GITHUB_REPOSITORY = ${process.env.GITHUB_REPOSITORY}`);
+    } else {
+      // ✅ GOOD: Local-specific behavior
+      console.log('   Running locally');
+      console.log('   GitHub-specific env vars not available (expected!)');
+    }
+    
+    await page.goto(BASE_URL);
+    
+    // ✅ GOOD: Test works in both environments
+    expect(true).toBe(true);
+  });
+
+  /**
+   * ✅ GOOD PATTERN E5: Feature flags with sensible defaults
+   * 
+   * Always provide a default value
+   */
+  test('E5: Feature flag with default value', async ({ page }) => {
+    // ✅ GOOD: Feature flag with sensible default
+    const featureEnabled = process.env.ENABLE_NEW_CHECKOUT === 'true';
+    const defaultBehavior = process.env.ENABLE_NEW_CHECKOUT === undefined;
+    
+    console.log('✅ GOOD: Feature flag with default handling');
+    console.log(`   ENABLE_NEW_CHECKOUT = ${process.env.ENABLE_NEW_CHECKOUT ?? 'undefined'}`);
+    console.log(`   Feature enabled: ${featureEnabled}`);
+    console.log(`   Using default: ${defaultBehavior}`);
+    
+    await page.goto(BASE_URL);
+    
+    // ✅ GOOD: Test adapts to feature state
+    if (featureEnabled) {
+      console.log('   Testing NEW checkout flow');
+      // await expect(page.getByTestId('new-checkout-button')).toBeVisible();
+    } else {
+      console.log('   Testing CLASSIC checkout flow (default)');
+      // await expect(page.getByTestId('classic-checkout-button')).toBeVisible();
+    }
+    
+    // ✅ GOOD: Test passes regardless of feature state
+    await expect(page.getByRole('tab', { name: 'Business' })).toBeVisible();
+  });
+
+  /**
+   * ✅ GOOD PATTERN E6: Test credentials with fallback
+   * 
+   * Always provide test account fallback
+   */
+  test('E6: Test credentials with fallback', async ({ page }) => {
+    // ✅ GOOD: Always provide fallback test credentials
+    const testUsername = process.env.TEST_USERNAME || 'testuser';
+    const testPassword = process.env.TEST_PASSWORD || 'testpass123';
+    
+    console.log('✅ GOOD: Test credentials with fallback');
+    console.log(`   TEST_USERNAME = ${process.env.TEST_USERNAME ? '[FROM ENV]' : '[FALLBACK: testuser]'}`);
+    console.log(`   TEST_PASSWORD = ${process.env.TEST_PASSWORD ? '[FROM ENV]' : '[FALLBACK]'}`);
+    
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // ✅ GOOD: Always has valid credentials
+    expect(testUsername).toBeDefined();
+    expect(testPassword).toBeDefined();
+    
+    // ✅ GOOD: Can proceed with login
+    await page.getByTestId('login-username').fill(testUsername);
+    await page.getByTestId('login-password').fill(testPassword);
+    
+    console.log('   ✅ Login form filled successfully');
   });
 
 });

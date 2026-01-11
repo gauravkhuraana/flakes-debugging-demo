@@ -10,6 +10,11 @@
  *   - Network instability
  *   - Resource contention (ports, files)
  * 
+ * ⚠️  FLAKES Categories: E (Environment Variables) + Dependencies
+ *   - Secrets not injected in CI
+ *   - Missing env vars in CI
+ *   - API keys undefined
+ * 
  * ⚠️  WHY THESE PASS LOCALLY BUT FAIL IN CI:
  * 
  * Your local machine:
@@ -17,12 +22,16 @@
  *   - APIs respond quickly
  *   - No rate limiting (low request volume)
  *   - Cached DNS resolution
+ *   - .env file loaded with secrets
+ *   - Environment variables set in shell
  * 
  * CI environment:
  *   - Variable network latency
  *   - APIs may rate limit CI IP ranges
  *   - Cold DNS lookups
  *   - Shared infrastructure = contention
+ *   - Secrets must be explicitly injected
+ *   - No .env file, no shell env vars!
  * 
  * 🔍 PROACTIVE IDENTIFICATION - Look for these RED FLAGS:
  *   ❌ Direct calls to third-party APIs in tests
@@ -30,8 +39,10 @@
  *   ❌ Hardcoded ports that might conflict
  *   ❌ Assertions on external data that can change
  *   ❌ No retry logic for network calls
+ *   ❌ process.env.API_KEY without fallback
+ *   ❌ Assuming secrets exist without checking
  * 
- * @tags @fail @dependencies @external @network
+ * @tags @fail @dependencies @external @network @environment
  */
 
 import { test, expect } from '@playwright/test';
@@ -190,4 +201,183 @@ test.describe('Dependencies Demo - Failing Tests @fail', () => {
  * 4. NETWORK-DEPENDENT TIMING
  *    ❌ setTimeout(5000) and hope API responds
  *    ❌ No retry logic
+ */
+
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * 🔐 ENVIRONMENT VARIABLES & SECRETS - E from FLAKES
+ * 
+ * These tests demonstrate missing secrets/env vars in CI
+ * ═══════════════════════════════════════════════════════════════
+ */
+test.describe('Environment & Secrets Demo - BAD Patterns @fail', () => {
+
+  /**
+   * ❌ BAD PATTERN E1: API key without fallback
+   * 
+   * Local:  You have .env file with API_KEY set
+   * CI:     No .env file, API_KEY is undefined!
+   */
+  test('E1: API key not injected in CI', async ({ request }) => {
+    // ❌ BAD: Assuming API_KEY exists
+    const apiKey = process.env.API_KEY;
+    
+    console.log('❌ BAD: Using API_KEY without checking');
+    console.log(`   API_KEY = ${apiKey ?? 'undefined'}`);
+    console.log('   Local: Set in .env or shell');
+    console.log('   CI: Must be injected via secrets!');
+    
+    // ❌ BAD: This will fail in CI if API_KEY not in GitHub Secrets
+    expect(apiKey).toBeDefined();
+    expect(apiKey).not.toBe('');
+    
+    // Would fail: API call with undefined key
+    // await request.get('https://api.example.com/data', {
+    //   headers: { 'Authorization': `Bearer ${apiKey}` }
+    // });
+  });
+
+  /**
+   * ❌ BAD PATTERN E2: Database credentials not injected
+   * 
+   * Local:  DATABASE_URL in .env
+   * CI:     Not configured in CI secrets
+   */
+  test('E2: Database secret missing in CI', async ({ page }) => {
+    // ❌ BAD: Assuming database credentials exist
+    const dbUrl = process.env.DATABASE_URL;
+    const dbPassword = process.env.DB_PASSWORD;
+    
+    console.log('❌ BAD: Database credentials without fallback');
+    console.log(`   DATABASE_URL = ${dbUrl ? '[SET]' : 'undefined'}`);
+    console.log(`   DB_PASSWORD = ${dbPassword ? '[SET]' : 'undefined'}`);
+    console.log('   Local: In .env file');
+    console.log('   CI: Must add to GitHub Secrets!');
+    
+    // ❌ BAD: Will fail in CI
+    expect(dbUrl).toBeDefined();
+    
+    await page.goto(BASE_URL);
+  });
+
+  /**
+   * ❌ BAD PATTERN E3: Third-party service token
+   * 
+   * Local:  STRIPE_KEY, TWILIO_SID etc in environment
+   * CI:     Forgot to add to CI secrets
+   */
+  test('E3: Third-party service token missing', async ({ request }) => {
+    // ❌ BAD: Multiple secrets assumed to exist
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+    const sendgridKey = process.env.SENDGRID_API_KEY;
+    
+    console.log('❌ BAD: Third-party tokens without fallback');
+    console.log(`   STRIPE_SECRET_KEY = ${stripeKey ? '[SET]' : 'undefined'}`);
+    console.log(`   TWILIO_ACCOUNT_SID = ${twilioSid ? '[SET]' : 'undefined'}`);
+    console.log(`   SENDGRID_API_KEY = ${sendgridKey ? '[SET]' : 'undefined'}`);
+    
+    // ❌ BAD: Assumes at least one exists
+    const hasAnyKey = stripeKey || twilioSid || sendgridKey;
+    expect(hasAnyKey).toBeTruthy();
+  });
+
+  /**
+   * ❌ BAD PATTERN E4: CI-specific env var used locally
+   * 
+   * Local:  GITHUB_TOKEN doesn't exist
+   * CI:     GITHUB_TOKEN is auto-injected
+   */
+  test('E4: CI-only env var assumed everywhere', async ({ page }) => {
+    // ❌ BAD: This only exists in GitHub Actions
+    const githubToken = process.env.GITHUB_TOKEN;
+    const githubActor = process.env.GITHUB_ACTOR;
+    const githubRepository = process.env.GITHUB_REPOSITORY;
+    
+    console.log('❌ BAD: CI-specific env vars assumed to exist');
+    console.log(`   GITHUB_TOKEN = ${githubToken ? '[SET]' : 'undefined'}`);
+    console.log(`   GITHUB_ACTOR = ${githubActor ?? 'undefined'}`);
+    console.log(`   GITHUB_REPOSITORY = ${githubRepository ?? 'undefined'}`);
+    console.log('   Local: These dont exist!');
+    console.log('   CI: Auto-injected by GitHub Actions');
+    
+    await page.goto(BASE_URL);
+    
+    // ❌ BAD: This logic is inverted - fails LOCALLY, passes in CI
+    // Demonstrating both directions of the problem
+    expect(githubToken || githubActor).toBeDefined();
+  });
+
+  /**
+   * ❌ BAD PATTERN E5: Feature flag env var
+   * 
+   * Local:  ENABLE_FEATURE_X=true in your shell
+   * CI:     Not configured, feature disabled, test fails
+   */
+  test('E5: Feature flag not set in CI', async ({ page }) => {
+    // ❌ BAD: Feature flag without default
+    const featureEnabled = process.env.ENABLE_NEW_CHECKOUT === 'true';
+    
+    console.log('❌ BAD: Feature flag without default value');
+    console.log(`   ENABLE_NEW_CHECKOUT = ${process.env.ENABLE_NEW_CHECKOUT ?? 'undefined'}`);
+    console.log(`   Feature enabled: ${featureEnabled}`);
+    console.log('   Local: You set it to "true"');
+    console.log('   CI: undefined → false → test fails!');
+    
+    await page.goto(BASE_URL);
+    
+    // ❌ BAD: Test assumes feature is enabled
+    expect(featureEnabled).toBe(true);
+    
+    // Would then test feature-specific UI that doesn't exist when disabled
+    // await expect(page.getByTestId('new-checkout-button')).toBeVisible();
+  });
+
+  /**
+   * ❌ BAD PATTERN E6: Test user credentials hardcoded vs env
+   * 
+   * Local:  Hardcoded works because you know the test account
+   * CI:     Test account might be different or rotated
+   */
+  test('E6: Test credentials not externalized', async ({ page }) => {
+    // ❌ BAD: Mix of hardcoded and env vars without fallback
+    const testUsername = process.env.TEST_USERNAME; // undefined in CI!
+    const testPassword = process.env.TEST_PASSWORD; // undefined in CI!
+    
+    console.log('❌ BAD: Test credentials from env without fallback');
+    console.log(`   TEST_USERNAME = ${testUsername ?? 'undefined'}`);
+    console.log(`   TEST_PASSWORD = ${testPassword ? '[SET]' : 'undefined'}`);
+    
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // ❌ BAD: Will fail if env vars not set
+    expect(testUsername).toBeDefined();
+    expect(testPassword).toBeDefined();
+    
+    // Would fail: trying to login with undefined credentials
+    // await page.getByTestId('login-username').fill(testUsername!);
+    // await page.getByTestId('login-password').fill(testPassword!);
+  });
+
+});
+
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * SUMMARY: Why these fail
+ * ═══════════════════════════════════════════════════════════════
+ * 
+ * Network Tests:
+ *   - Test 1-6: Timeouts, external dependencies, network variability
+ * 
+ * Environment/Secrets Tests:
+ *   - E1: API_KEY not in CI secrets
+ *   - E2: DATABASE_URL/DB_PASSWORD missing
+ *   - E3: Third-party tokens (Stripe, Twilio) not configured
+ *   - E4: CI-only vars (GITHUB_TOKEN) don't exist locally
+ *   - E5: Feature flags not set in CI
+ *   - E6: Test credentials not externalized
+ * 
+ * ➡️ See external-services.pass.spec.ts for the FIXED versions!
+ * ═══════════════════════════════════════════════════════════════
  */

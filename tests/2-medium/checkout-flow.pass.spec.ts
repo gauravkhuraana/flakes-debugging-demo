@@ -165,6 +165,93 @@ test.describe('Environment & Config Demo - GOOD Patterns @pass', () => {
 
 /**
  * ═══════════════════════════════════════════════════════════════
+ * 🖥️ VIEWPORT TESTS - K (Konfiguration Drift) - FIXED
+ * 
+ * These tests demonstrate proper viewport handling
+ * ═══════════════════════════════════════════════════════════════
+ */
+test.describe('Viewport Demo - GOOD Patterns @pass', () => {
+
+  /**
+   * ✅ GOOD PATTERN 6: Explicit viewport in test
+   * 
+   * Fix: Always set viewport explicitly - don't rely on defaults
+   */
+  test('Test 6: Explicit viewport - consistent behavior', async ({ page }) => {
+    // ✅ GOOD: Set explicit viewport at start
+    await page.setViewportSize({ width: 1280, height: 720 });
+    
+    const viewportSize = page.viewportSize();
+    console.log('✅ GOOD: Explicit viewport set');
+    console.log(`   Viewport: ${viewportSize?.width}x${viewportSize?.height}`);
+    console.log('   Same viewport locally and in CI!');
+    
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // Element visibility is now predictable
+    const loginForm = page.getByTestId('login-username');
+    
+    // ✅ GOOD: Consistent viewport = consistent visibility
+    await expect(loginForm).toBeVisible();
+  });
+
+  /**
+   * ✅ GOOD PATTERN 7: Mobile viewport WITH mobile-specific selectors
+   * 
+   * Fix: When testing mobile, use mobile navigation patterns
+   */
+  test('Test 7: Mobile viewport with adapted selectors', async ({ page }) => {
+    // ✅ GOOD: Mobile viewport with mobile-aware test
+    await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE
+    
+    console.log('✅ GOOD: Mobile viewport (375x667) with mobile selectors');
+    console.log('   Adapting test for mobile layout');
+    
+    await page.goto(BASE_URL);
+    
+    // ✅ GOOD: Check for mobile-specific elements OR adapt assertions
+    const isMobile = (page.viewportSize()?.width ?? 0) < 768;
+    console.log(`   Is mobile: ${isMobile}`);
+    
+    // ✅ GOOD: Tabs should still work on mobile
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    // ✅ GOOD: Assert on elements that exist in current viewport
+    await expect(page.getByRole('tab', { name: 'Business' })).toBeVisible();
+  });
+
+  /**
+   * ✅ GOOD PATTERN 8: Re-validate after viewport resize
+   * 
+   * Fix: After viewport change, re-check element visibility
+   */
+  test('Test 8: Viewport resize with re-validation', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(BASE_URL);
+    await page.getByRole('tab', { name: 'Business' }).click();
+    
+    console.log('✅ GOOD: Resize viewport and adapt assertions');
+    
+    // Find element on desktop viewport
+    const loginForm = page.getByTestId('login-username');
+    await expect(loginForm).toBeVisible();
+    console.log('   Login form visible at 1280px ✓');
+    
+    // ✅ GOOD: Resize AND adapt assertions
+    await page.setViewportSize({ width: 375, height: 667 });
+    console.log('   Resized to 375px (mobile)');
+    
+    // ✅ GOOD: Re-check visibility after resize
+    // On this site, login form should still be visible on mobile
+    await expect(loginForm).toBeVisible();
+    console.log('   Login form still visible on mobile ✓');
+  });
+
+});
+
+/**
+ * ═══════════════════════════════════════════════════════════════
  * SUMMARY: How these are fixed
  * ═══════════════════════════════════════════════════════════════
  * 
@@ -173,6 +260,9 @@ test.describe('Environment & Config Demo - GOOD Patterns @pass', () => {
  * Test 3: ✅ Assert behavior, not timing
  * Test 4: ✅ os.userInfo().username (cross-platform)
  * Test 5: ✅ Config-driven URL with fallback
+ * Test 6: ✅ Explicit viewport - don't rely on defaults
+ * Test 7: ✅ Mobile viewport with mobile-aware selectors
+ * Test 8: ✅ Re-validate after viewport resize
  * 
  * 📋 CODE REVIEW CHECKLIST:
  *   □ All env vars have fallbacks?
@@ -180,5 +270,7 @@ test.describe('Environment & Config Demo - GOOD Patterns @pass', () => {
  *   □ No timing assertions?
  *   □ Using cross-platform APIs (os module)?
  *   □ No hardcoded localhost?
+ *   □ Viewport explicitly set?
+ *   □ Mobile/responsive tests adapted?
  * ═══════════════════════════════════════════════════════════════
  */

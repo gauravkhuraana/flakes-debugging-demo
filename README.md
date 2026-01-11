@@ -236,10 +236,115 @@ Open `tests/5-dependencies/external-services.fail.spec.ts` for external API issu
 Open `tests/6-debugging/systematic-debugging.spec.ts` for the methodology.
 
 **The 4 Steps:**
-1. **Reproduce Reliably** — Run 100 times with `--repeat-each=100`
+1. **Reproduce Reliably** — Run 5-10 times with `--repeat-each=5` (not 100!)
 2. **Isolate the Variable** — Binary search for the flaky step
 3. **Instrument Aggressively** — Add timestamps, screenshots, traces
 4. **Pattern Recognition** — Identify when/where failures occur
+
+---
+
+## 🔍 4-Step Debugging Framework - Decision Tree
+
+When a test is flaky, use this decision tree to find the root cause:
+
+```
+                        🔴 Test is FLAKY
+                              │
+                              ▼
+        ┌─────────────────────────────────────────┐
+        │  STEP 1: REPRODUCE                       │
+        │  Run 5-10x: --repeat-each=5             │
+        │  Confirm it's actually flaky            │
+        └─────────────────────────────────────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+         10/10 PASS      MIXED RESULTS    10/10 FAIL
+              │               │               │
+              ▼               ▼               ▼
+         NOT FLAKY      ✅ CONFIRMED      JUST BROKEN
+        (one-off)         FLAKY!         (fix the bug)
+                              │
+                              ▼
+        ┌─────────────────────────────────────────┐
+        │  STEP 2: ISOLATE                         │
+        │  Break test into steps, find which fails │
+        └─────────────────────────────────────────┘
+                              │
+                              ▼
+        ┌─────────────────────────────────────────┐
+        │  STEP 3: INSTRUMENT                      │
+        │  Add timing logs, screenshots            │
+        │  "You can't fix what you can't see!"    │
+        └─────────────────────────────────────────┘
+                              │
+                              ▼
+        ┌─────────────────────────────────────────┐
+        │  STEP 4: PATTERN RECOGNITION             │
+        │  Find the "why" - see tree below         │
+        └─────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│           Does it PASS with --workers=1?                     │
+└─────────────────────────────────────────────────────────────┘
+                    │                       │
+                   YES                      NO
+                    │                       │
+                    ▼                       ▼
+          🔴 PARALLEL ISSUE          Keep looking...
+          • Shared state                    │
+          • Race condition                  ▼
+          • File conflicts      ┌───────────────────────────┐
+                                │ Does it PASS when run     │
+          FIX: Isolate state,   │ ALONE (not in suite)?    │
+          unique test data      └───────────────────────────┘
+                                          │           │
+                                         YES          NO
+                                          │           │
+                                          ▼           ▼
+                                  🔴 TEST ORDER    Keep looking...
+                                  DEPENDENCY             │
+                                  • Needs setup          ▼
+                                    from other     ┌─────────────────────┐
+                                    test           │ PASSES locally,     │
+                                                   │ FAILS in CI?        │
+                                  FIX: Make test   └─────────────────────┘
+                                  self-contained            │           │
+                                                           YES          NO
+                                                            │           │
+                                                            ▼           ▼
+                                                    🔴 ENVIRONMENT   🔴 TIMING
+                                                    ISSUE            ISSUE
+                                                    • Slower CPU     • Race condition
+                                                    • Less RAM       • Missing await
+                                                    • Network        • Short timeout
+                                                    
+                                                    FIX: Increase    FIX: Use proper
+                                                    timeouts, use    waits, await all
+                                                    waitFor()        async operations
+```
+
+### Quick Pattern Detection Commands
+
+```bash
+# Check PARALLEL issue
+npx playwright test my-test --workers=1
+# ✅ Passes? → Tests are interfering with each other
+
+# Check TEST DEPENDENCY issue  
+npx playwright test --grep "my-specific-test"
+# ✅ Passes alone? → Some other test is affecting this one
+
+# Check CI ENVIRONMENT issue
+npx playwright test my-test --workers=2  # CI usually has fewer cores
+# Compare timing with CI logs
+
+# Check BROWSER-specific issue
+npx playwright test my-test --project=chromium
+npx playwright test my-test --project=firefox
+npx playwright test my-test --project=webkit
+```
 
 ---
 
