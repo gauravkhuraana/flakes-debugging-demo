@@ -1,0 +1,135 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - img [ref=e7]
+      - generic [ref=e9]:
+        - heading "Test Automation Practice Hub" [level=1] [ref=e10]
+        - paragraph [ref=e11]: For Selenium, Playwright, Cypress, etc. This website contains every common scenario you'll encounter in real-world test automation projects. Each section is designed to challenge different aspects of your automation framework, from basic element interactions to complex business workflows.
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - tablist [ref=e14]:
+        - tab "Overview" [selected] [ref=e15]
+        - tab "Basic" [ref=e16]
+        - tab "Intermediate" [ref=e17]
+        - tab "Advanced" [ref=e18]
+        - tab "Business" [ref=e19]
+        - tab "System" [ref=e20]
+        - tab "Complex" [ref=e21]
+        - tab "Buggy" [ref=e22]
+      - tabpanel "Overview" [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25] [cursor=pointer]:
+            - generic [ref=e26]:
+              - generic [ref=e27]:
+                - img [ref=e28]
+                - generic [ref=e30]: Beginner
+              - generic [ref=e31]: Basic Elements
+              - generic [ref=e32]: Fundamental form controls and basic interactions
+            - generic [ref=e34]:
+              - generic [ref=e35]: Text inputs
+              - generic [ref=e36]: Dropdowns
+              - generic [ref=e37]: Radio buttons
+              - generic [ref=e38]: Checkboxes
+              - generic [ref=e39]: +2 more
+          - generic [ref=e40] [cursor=pointer]:
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - img [ref=e43]
+                - generic [ref=e45]: Intermediate
+              - generic [ref=e46]: Intermediate UI
+              - generic [ref=e47]: Complex user interactions and dynamic behaviors
+            - generic [ref=e49]:
+              - generic [ref=e50]: Drag & drop
+              - generic [ref=e51]: File upload
+              - generic [ref=e52]: Date pickers
+              - generic [ref=e53]: Sliders
+              - generic [ref=e54]: +2 more
+          - generic [ref=e55] [cursor=pointer]:
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - img [ref=e58]
+                - generic [ref=e60]: Advanced
+              - generic [ref=e61]: Advanced Features
+              - generic [ref=e62]: Challenging scenarios that break many automation scripts
+            - generic [ref=e64]:
+              - generic [ref=e65]: iFrames
+              - generic [ref=e66]: Shadow DOM
+              - generic [ref=e67]: Multiple windows
+              - generic [ref=e68]: Dynamic IDs
+              - generic [ref=e69]: +2 more
+          - generic [ref=e70] [cursor=pointer]:
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - generic [ref=e75]: Intermediate
+              - generic [ref=e76]: Business Flows
+              - generic [ref=e77]: End-to-end user journeys and complete workflows
+            - generic [ref=e79]:
+              - generic [ref=e80]: User registration
+              - generic [ref=e81]: E-commerce checkout
+              - generic [ref=e82]: Search & filters
+              - generic [ref=e83]: Profile management
+          - generic [ref=e84] [cursor=pointer]:
+            - generic [ref=e85]:
+              - generic [ref=e86]:
+                - img [ref=e87]
+                - generic [ref=e89]: Advanced
+              - generic [ref=e90]: System Features
+              - generic [ref=e91]: Browser APIs and system-level functionality
+            - generic [ref=e93]:
+              - generic [ref=e94]: Geolocation
+              - generic [ref=e95]: Notifications
+              - generic [ref=e96]: Storage
+              - generic [ref=e97]: Multi-language
+              - generic [ref=e98]: +1 more
+          - generic [ref=e99] [cursor=pointer]:
+            - generic [ref=e100]:
+              - generic [ref=e101]:
+                - img [ref=e102]
+                - generic [ref=e104]: Expert
+              - generic [ref=e105]: Complex Scenarios
+              - generic [ref=e106]: Real-time updates and challenging edge cases
+            - generic [ref=e108]:
+              - generic [ref=e109]: Delayed loading
+              - generic [ref=e110]: WebSocket updates
+              - generic [ref=e111]: Retry logic
+              - generic [ref=e112]: Hidden elements
+              - generic [ref=e113]: +1 more
+          - generic [ref=e114] [cursor=pointer]:
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - img [ref=e117]
+                - generic [ref=e119]: Advanced
+              - generic [ref=e120]: Buggy Page
+              - generic [ref=e121]: Common automation problems and pitfalls to practice
+            - generic [ref=e123]:
+              - generic [ref=e124]: Dynamic IDs
+              - generic [ref=e125]: Stale elements
+              - generic [ref=e126]: Race conditions
+              - generic [ref=e127]: Overlapping elements
+              - generic [ref=e128]: +2 more
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]: About This Practice Hub
+            - generic [ref=e132]: A comprehensive training ground for test automation engineers
+          - generic [ref=e133]:
+            - paragraph [ref=e134]: This website contains every common scenario you'll encounter in real-world test automation projects. Each section is designed to challenge different aspects of your automation framework, from basic element interactions to complex business workflows.
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - heading "🎯 Perfect for:" [level=4] [ref=e137]
+                - list [ref=e138]:
+                  - listitem [ref=e139]: • Learning automation frameworks
+                  - listitem [ref=e140]: • Testing framework capabilities
+                  - listitem [ref=e141]: • Interview preparation
+                  - listitem [ref=e142]: • Debugging automation issues
+              - generic [ref=e143]:
+                - heading "🔧 Supported Tools:" [level=4] [ref=e144]
+                - list [ref=e145]:
+                  - listitem [ref=e146]: • Cypress
+                  - listitem [ref=e147]: • Playwright
+                  - listitem [ref=e148]: • Selenium WebDriver
+                  - listitem [ref=e149]: • TestCafe & others
+```
