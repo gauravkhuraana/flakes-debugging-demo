@@ -1,6 +1,6 @@
 # 🔍 FLAKES Debugging Demo
 
-> Companion repo for TestGuild 2026: **"When Tests Fail in CI But Pass Locally: A Deep Dive"**
+> Companion repo for AI Test Fest 2026: **"From Flaky to Bulletproof: Teaching AI to Smell Bad Test Patterns"** & TestGuild 2026: **"When Tests Fail in CI But Pass Locally: A Deep Dive"**
 
 | Failing Tests (Demo) | Fixed Tests |
 |---------------------|-------------|
@@ -383,6 +383,7 @@ This practice site includes:
 - [FLAKES Checklist](docs/FLAKES-checklist.md) — One-page quick reference
 - [FLAKES Decision Tree](docs/FLAKES-decision-tree.md) — Debugging flowchart
 - [Playwright Documentation](https://playwright.dev/)
+- [AI Test Fest 2026 Session Recording](#) — Coming soon!
 - [TestGuild 2026 Session Recording](#) — Coming soon!
 
 ---

@@ -1,7 +1,7 @@
 {
   "name": "flakes-debugging-demo",
   "version": "1.0.0",
-  "description": "Companion repo for TestGuild 2026: When Tests Fail in CI But Pass Locally",
+  "description": "Companion repo for AI Test Fest 2026 & TestGuild 2026: When Tests Fail in CI But Pass Locally",
   "main": "index.js",
   "scripts": {
     "test": "npx playwright test",

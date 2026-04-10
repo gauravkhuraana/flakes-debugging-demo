@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-This is a **TestGuild 2026 companion repo** teaching how to write CI-resilient tests. The goal is **proactive identification** of patterns that cause "works on my machine" failures.
+This is an **AI Test Fest 2026 & TestGuild 2026 companion repo** teaching how to write CI-resilient tests. The goal is **proactive identification** of patterns that cause "works on my machine" failures.
 
 ### Two Types of Tests (Always Paired)
 | File Pattern | Purpose | Expected Behavior |
