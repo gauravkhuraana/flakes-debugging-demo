@@ -22,7 +22,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 
-const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = 'https://gauravkhurana.com/test-automation-play/';
 
 test.describe('State & Isolation Demo - GOOD Patterns @pass', () => {
 

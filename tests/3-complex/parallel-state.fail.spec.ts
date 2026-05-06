@@ -28,7 +28,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = 'https://gauravkhurana.com/test-automation-play/';
 
 // ═══════════════════════════════════════════════════════════════
 // ❌ BAD: Shared mutable state between tests

@@ -10,7 +10,7 @@ This is an **AI Test Fest 2026 & TestGuild 2026 companion repo** teaching how to
 | `*.fail.spec.ts` | **Anti-patterns to avoid** | Pass locally, FAIL in CI |
 | `*.pass.spec.ts` | **Best practices to follow** | Pass EVERYWHERE |
 
-**Target Site:** https://gauravkhurana.in/test-automation-play/
+**Target Site:** https://gauravkhurana.com/test-automation-play/
 
 ### Key Concept: Environmentally Sensitive → Flaky
 Tests that "always fail in CI" today become **truly flaky** as CI resources vary. The FLAKES framework catches both by targeting the root cause patterns.

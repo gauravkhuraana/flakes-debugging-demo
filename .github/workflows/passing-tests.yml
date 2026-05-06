@@ -21,7 +21,7 @@ jobs:
     
     # ✅ FIX: Environment variables at job level
     env:
-      BASE_URL: https://gauravkhurana.in/test-automation-play
+      BASE_URL: https://gauravkhurana.com/test-automation-play
       API_TIMEOUT: '10000'
       CI: true
     

@@ -21,7 +21,7 @@ import { test, expect } from '@playwright/test';
 import * as os from 'os';
 
 // ✅ GOOD: Config-driven URL with fallback
-const BASE_URL = process.env.BASE_URL || 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = process.env.BASE_URL || 'https://gauravkhurana.com/test-automation-play/';
 
 // Minimal logging - once per suite
 function logEnv() {
@@ -40,10 +40,10 @@ test.describe('Environment & Config Demo - GOOD Patterns @pass', () => {
    */
   test('Test 1: Environment variable WITH fallback', async ({ page }) => {
     // ✅ GOOD: Fallback value ensures it always works
-    const baseUrl = process.env.MY_APP_URL || 'https://gauravkhurana.in';
+    const baseUrl = process.env.MY_APP_URL || 'https://gauravkhurana.com';
     
     console.log('✅ GOOD: Environment variable with fallback');
-    console.log(`   Code: process.env.MY_APP_URL || 'https://gauravkhurana.in'`);
+    console.log(`   Code: process.env.MY_APP_URL || 'https://gauravkhurana.com'`);
     console.log(`   MY_APP_URL = ${process.env.MY_APP_URL ?? 'not set'}`);
     console.log(`   baseUrl = ${baseUrl} (fallback used if not set)`);
     
@@ -138,7 +138,7 @@ test.describe('Environment & Config Demo - GOOD Patterns @pass', () => {
    */
   test('Test 5: Config-driven URL with fallback', async ({ page }) => {
     // ✅ GOOD: URL from config/env with fallback
-    const url = process.env.BASE_URL || 'https://gauravkhurana.in/test-automation-play/';
+    const url = process.env.BASE_URL || 'https://gauravkhurana.com/test-automation-play/';
     
     console.log('✅ GOOD: Config-driven URL');
     console.log(`   Code: process.env.BASE_URL || 'https://...'`);

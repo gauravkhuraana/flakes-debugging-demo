@@ -33,7 +33,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = 'https://gauravkhurana.com/test-automation-play/';
 
 // ✅ FIX: Environment-aware configuration
 const isCI = process.env.CI === 'true';

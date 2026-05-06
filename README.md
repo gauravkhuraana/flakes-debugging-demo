@@ -5,7 +5,7 @@
 | Failing Tests (Demo) | Fixed Tests |
 |---------------------|-------------|
 | ![Failing](https://github.com/gauravkhuraana/flakes-debugging-demo/actions/workflows/failing-tests.yml/badge.svg) | ![Passing](https://github.com/gauravkhuraana/flakes-debugging-demo/actions/workflows/passing-tests.yml/badge.svg) |
-| [📊 Failing Report](https://gauravkhurana.in/flakes-debugging-demo/failing-report/) | [📊 Passing Report](https://gauravkhurana.in/flakes-debugging-demo/passing-report/) |
+| [📊 Failing Report](https://gauravkhurana.com/flakes-debugging-demo/failing-report/) | [📊 Passing Report](https://gauravkhurana.com/flakes-debugging-demo/passing-report/) |
 
 ---
 
@@ -41,7 +41,7 @@ Each test scenario has two versions:
 | **5-dependencies** | Advanced | External | API mocking, service virtualization |
 | **6-debugging** | Reference | FLIP | FLIP systematic debugging framework |
 
-**Target Site:** [gauravkhurana.in/test-automation-play/](https://gauravkhurana.in/test-automation-play/)
+**Target Site:** [gauravkhurana.com/test-automation-play/](https://gauravkhurana.com/test-automation-play/)
 
 ---
 
@@ -369,7 +369,7 @@ npx playwright test my-test --project=webkit
 
 ## 🛠️ Demo Site
 
-All tests run against: **https://gauravkhurana.in/test-automation-play/**
+All tests run against: **https://gauravkhurana.com/test-automation-play/**
 
 This practice site includes:
 - Basic Elements (delayed buttons)
@@ -409,7 +409,7 @@ MIT License - Feel free to use this for learning and training!
 **Gaurav Khurana**  
 Senior Test Engineer
 
-- Website: [gauravkhurana.in](https://gauravkhurana.in)
+- Website: [gauravkhurana.com](https://gauravkhurana.com)
 - GitHub: [@gauravkhuraana](https://github.com/gauravkhuraana)
 
 ---

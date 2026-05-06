@@ -23,7 +23,7 @@
 import { test, expect } from '@playwright/test';
 import * as os from 'os';
 
-const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = 'https://gauravkhurana.com/test-automation-play/';
 
 // Minimal logging - once per suite
 function logEnv() {
@@ -44,7 +44,7 @@ test.describe('Environment & Config Demo - BAD Patterns @fail', () => {
   test('Test 1: Environment variable without fallback', async ({ page }) => {
     // ❌ BAD: Relying on Windows-specific env var
     const baseUrl = (process.env.MY_APP_URL || process.env.USERPROFILE) 
-                      ? 'https://gauravkhurana.in' 
+                      ? 'https://gauravkhurana.com' 
                       : undefined;
     
     console.log('❌ BAD: Relying on Windows-specific env var');

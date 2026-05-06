@@ -105,27 +105,27 @@ Or CI is significantly slower than local?
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                  IS IT A TIMING ISSUE?                           │
+│                  IS IT A TIMING ISSUE?                          │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  Does it pass if you:                                            │
-│  • Add a sleep/delay before the action?                          │
-│  • Run in headed/debug mode?                                     │
-│  • Run with --workers=1 (sequential)?                            │
-│                                                                  │
-│  If YES → Timing issue (L)                                       │
-│  If NO  → Async issue (A) or Config issue (K)                    │
-│                                                                  │
+│                                                                 │
+│  Does it pass if you:                                           │
+│  • Add a sleep/delay before the action?                         │
+│  • Run in headed/debug mode?                                    │
+│  • Run with --workers=1 (sequential)?                           │
+│                                                                 │
+│  If YES → Timing issue (L)                                      │
+│  If NO  → Async issue (A) or Config issue (K)                   │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
               ┌───────────────┴───────────────┐
-              │
+              │                               |
               ▼                               ▼
-       ┌─────────────┐                 ┌─────────────┐
+       ┌─────────────┐               ┌─────────────┐
        │ Timing/   │                 │  Async (A)  │
        │ Load (L)  │                 └─────────────┘
        └─────────────┘                       │
-              │                               ▼
+              │                              ▼
               ▼                    ┌──────────────────────────┐
 ┌──────────────────────────┐    │ FIX:                     │
 │ FIX:                     │    │ • Add await to actions   │

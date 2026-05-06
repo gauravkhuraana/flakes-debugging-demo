@@ -33,7 +33,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = 'https://gauravkhurana.com/test-automation-play/';
 const isCI = process.env.CI === 'true';
 
 test.describe('Dependencies Demo - Passing Tests @pass', () => {

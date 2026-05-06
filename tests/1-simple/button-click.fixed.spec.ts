@@ -20,7 +20,7 @@
 import { test, expect } from '@playwright/test';
 import * as os from 'os';
 
-const BASE_URL = 'https://gauravkhurana.in/test-automation-play/';
+const BASE_URL = 'https://gauravkhurana.com/test-automation-play/';
 
 // 🔍 Minimal logging - called once per suite
 function logEnvironmentInfo() {

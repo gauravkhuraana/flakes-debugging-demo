@@ -53,7 +53,7 @@ export default defineConfig({
   // Shared settings for all projects
   use: {
     // ✅ GOOD: Config-driven base URL (K - Konfiguration)
-    baseURL: process.env.BASE_URL || 'https://gauravkhurana.in/test-automation-play',
+    baseURL: process.env.BASE_URL || 'https://gauravkhurana.com/test-automation-play',
 
     // ✅ GOOD: Explicit viewport (K - Konfiguration)
     viewport: { width: 1280, height: 720 },
