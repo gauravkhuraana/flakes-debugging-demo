@@ -9,6 +9,84 @@
 
 ---
 
+## 🤖 AI Agent: FLAKES Fixer
+
+The **FLAKES Fixer** is a ready-to-use AI coding agent that automatically analyzes your Playwright tests, identifies flakiness patterns across all four frameworks, and produces corrected code.
+
+### What the Agent Does
+
+| Framework | Role | Coverage |
+|-----------|------|----------|
+| **FLAKES** | Prevention checklist | Filesystem, Latency, Async, Konfiguration, External, State |
+| **SPADE** | Deep detection | Selectors, Page animations, Auth sessions, DOM concurrency, Execution isolation |
+| **FLIP** | Diagnosis | Find → Localize → Instrument → Pattern |
+| **VERIFY** | Run & fix cycle | Validate → Execute isolated → Reproduce CI → Instrument → Fix → Yield |
+
+### Option 1: GitHub Copilot (Recommended)
+
+The agent file lives in `.github/agents/flakes-fixer.agent.md` and is picked up automatically by GitHub Copilot's coding agent.
+
+**To use it in your own project:**
+
+```bash
+# Copy just the agent file into your repo
+mkdir -p .github/agents
+curl -o .github/agents/flakes-fixer.agent.md \
+  https://raw.githubusercontent.com/gauravkhuraana/flakes-debugging-demo/main/.github/agents/flakes-fixer.agent.md
+```
+
+Or manually copy the file from this repo into your `.github/agents/` folder and commit it.
+
+**Invoking in GitHub Copilot Chat (VS Code or github.com):**
+
+```
+@workspace Analyze tests/my-test.spec.ts for flakiness using the FLAKES Fixer agent
+```
+
+```
+#file:tests/3-complex/parallel-state.fail.spec.ts fix all flaky patterns
+```
+
+**Invoking via GitHub Copilot Workspace:**
+
+Assign the agent a task like:
+> "Using the FLAKES Fixer agent, analyze all `*.fail.spec.ts` files and produce fixed versions"
+
+### Option 2: Claude Code
+
+Claude Code reads agents from `.github/agents/` automatically. If you have Claude Code installed:
+
+```bash
+# The agent is already available in this repo — invoke it directly
+@flakes-fixer tests/1-simple/button-click.fail.spec.ts
+```
+
+Or from within a Claude Code session, reference the agent file:
+
+```
+Use the agent at .github/agents/flakes-fixer.agent.md to fix tests/2-medium/checkout-flow.fail.spec.ts
+```
+
+To add it to your own project, copy `.github/agents/flakes-fixer.agent.md` into your repo's `.github/agents/` folder — Claude Code will discover it automatically.
+
+### Option 3: Any AI Assistant (Manual Prompt)
+
+The agent file is plain Markdown. You can paste it as a system prompt into any AI assistant (ChatGPT, Gemini, Copilot Chat, etc.) and then send your test file for analysis:
+
+1. Open `.github/agents/flakes-fixer.agent.md`
+2. Copy its full contents and paste as a system/context prompt
+3. Paste your flaky test code and ask: *"Analyze this for flakiness"*
+
+### Option 4: Use the Checklists Manually
+
+No AI required. The FLAKES and SPADE checklists are effective as a **code review checklist**:
+
+- [FLAKES Checklist](docs/FLAKES-checklist.md) — quick reference card
+- [FLAKES Decision Tree](docs/FLAKES-decision-tree.md) — debugging flowchart
+- The full checklists are also embedded in `.github/agents/flakes-fixer.agent.md`
+
+---
+
 ## 🎯 What's Inside
 
 This repository helps you **proactively identify** code patterns that will cause CI failures — before they waste your time debugging in production pipelines.
@@ -58,6 +136,8 @@ A **proactive** approach to writing CI-resilient tests. Use this as a code revie
 | **E** | **External & Environment** | Env vars, APIs, CDNs, network | No retry on external calls | Retry + fallbacks |
 | **S** | **State & Shared Data** | Shared state, test order, caching | `const EMAIL = 'same@test.com'` | `createTestUser()` unique |
 
+> For modern app patterns (animations, brittle selectors, auth sessions, shadow DOM), see **SPADE** inside the [AI Agent](.github/agents/flakes-fixer.agent.md).
+
 ## 🔄 FLIP Debugging Framework
 
 When flaky tests slip through, use **FLIP** to fix them:
@@ -69,7 +149,7 @@ When flaky tests slip through, use **FLIP** to fix them:
 | **I** | **Instrument** | Add logs, screenshots, timing evidence |
 | **P** | **Pattern** | Compare CI vs local, parallel vs serial |
 
-> 💡 **FLAKES** prevents CI failures. **FLIP** fixes them.
+> 💡 **FLAKES** + **SPADE** prevent CI failures. **FLIP** diagnoses them. **VERIFY** proves the fix works.
 
 ---
 
@@ -171,9 +251,13 @@ flakes-debugging-demo/
 │   │   └── external-services.pass.spec.ts # ✅ Mocked services
 │   └── 6-debugging/                   # 🔍 FLIP Methodology
 │       └── systematic-debugging.spec.ts # FLIP framework demo
-├── .github/workflows/
-│   ├── failing-tests.yml              # Demonstrates failures
-│   └── passing-tests.yml              # Demonstrates fixes
+├── .github/
+│   ├── agents/
+│   │   └── flakes-fixer.agent.md      # AI agent (GitHub Copilot / Claude Code)
+│   ├── workflows/
+│   │   ├── failing-tests.yml          # Demonstrates failures
+│   │   └── passing-tests.yml          # Demonstrates fixes
+│   └── copilot-instructions.md        # Repo-wide Copilot context
 └── docs/
     ├── FLAKES-checklist.md            # Quick reference + FLIP framework
     └── FLAKES-decision-tree.md        # Debugging flowchart
@@ -380,6 +464,7 @@ This practice site includes:
 
 ## 📚 Resources
 
+- [FLAKES Fixer AI Agent](.github/agents/flakes-fixer.agent.md) — Full agent with FLAKES + SPADE + FLIP + VERIFY
 - [FLAKES Checklist](docs/FLAKES-checklist.md) — One-page quick reference
 - [FLAKES Decision Tree](docs/FLAKES-decision-tree.md) — Debugging flowchart
 - [Playwright Documentation](https://playwright.dev/)
